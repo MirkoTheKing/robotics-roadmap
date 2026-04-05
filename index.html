@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Robotics SWE interview roadmap — ROS 2, SLAM, state estimation, computer vision, graphics, ML.">
+<title>Robotics SWE Roadmap</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--border:rgba(240,246,252,0.08);--border2:rgba(240,246,252,0.15);--text:#c9d1d9;--text2:#8b949e;--text3:#6e7681;--accent:#58a6ff;--accent-bg:rgba(88,166,255,0.08);--accent-border:rgba(88,166,255,0.22);--green:#3fb950;--green-bg:rgba(63,185,80,0.1);--green-border:rgba(63,185,80,0.25);--yellow:#d29922;--red:#f85149;--r:8px;--rl:12px;}
+[data-theme="light"]{--bg:#f0f2f5;--surface:#ffffff;--surface2:#f6f8fa;--border:rgba(31,35,40,0.09);--border2:rgba(31,35,40,0.18);--text:#1f2328;--text2:#636c76;--text3:#8c959f;--accent:#0969da;--accent-bg:rgba(9,105,218,0.07);--accent-border:rgba(9,105,218,0.2);--green:#1a7f37;--green-bg:rgba(26,127,55,0.08);--green-border:rgba(26,127,55,0.2);--yellow:#9a6700;--red:#d1242f;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.6;min-height:100vh;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+button{font-family:inherit;cursor:pointer;}
+code{background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-size:12px;font-family:'SF Mono','Fira Code',Consolas,monospace;color:var(--text);}
+header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:100;}
+.logo{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
+.logo-sep{color:var(--text3);font-weight:300;}
+.logo-sub{font-weight:400;color:var(--text3);font-size:13px;}
+.hbtns{display:flex;gap:8px;}
+.hbtn{background:none;border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);padding:5px 11px;font-size:12px;transition:all .15s;}
+.hbtn:hover{background:var(--surface2);color:var(--text);}
+.hbtn.danger:hover{border-color:var(--red);color:var(--red);}
+main{max-width:960px;margin:0 auto;padding:28px 24px 80px;}
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:13px 15px;}
+.slabel{font-size:11px;color:var(--text3);margin-bottom:2px;}
+.sval{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1.1;}
+.sunit{font-size:11px;color:var(--text3);}
+.prog-outer{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.prog-bar-wrap{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.prog-bar-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease;}
+.prog-label{font-size:11px;color:var(--text3);white-space:nowrap;}
+.pstrip{display:flex;gap:4px;margin-bottom:24px;}
+.pip{flex:1;height:4px;border-radius:2px;cursor:pointer;opacity:.45;transition:opacity .15s,transform .1s;}
+.pip:hover{opacity:1;transform:scaleY(1.6);}
+.pip.done-pip{opacity:1;}
+.sec-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+.featured{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:32px;overflow:hidden;}
+.fhead{padding:18px 22px;border-bottom:1px solid var(--border);}
+.ftop{display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap;}
+.fdot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.ftitle{font-size:15px;font-weight:700;color:var(--text);}
+.fbadge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);}
+.fsub{font-size:13px;color:var(--text2);}
+.wtabs{display:flex;border-bottom:1px solid var(--border);padding:0 14px;overflow-x:auto;scrollbar-width:none;}
+.wtabs::-webkit-scrollbar{display:none;}
+.wtab{font-size:13px;padding:10px 14px;color:var(--text3);border:none;border-bottom:2px solid transparent;background:none;white-space:nowrap;transition:color .15s;}
+.wtab:hover{color:var(--text2);}
+.wtab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
+.wcontent{padding:22px;display:none;}
+.wcontent.active{display:block;}
+.wtitle{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.wgoal{font-size:13px;color:var(--text2);line-height:1.65;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.day-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.dcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px 13px;}
+.dlabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:5px;}
+.dtopic{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3;}
+.ddetail{font-size:12px;color:var(--text2);line-height:1.55;}
+.exlabel{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:9px;}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.excard{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px 13px;}
+.exdiff{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;margin-bottom:7px;display:inline-block;}
+.easy{background:rgba(63,185,80,.1);color:#3fb950;}
+.medium{background:rgba(210,153,34,.1);color:#d29922;}
+.hard{background:rgba(248,81,73,.1);color:#f85149;}
+.exname{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.exdesc{font-size:12px;color:var(--text2);line-height:1.55;}
+.ibox{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--r);padding:13px 15px;}
+.ibox-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:8px;}
+.ibox-q{font-size:13px;padding:3px 0 3px 18px;position:relative;color:var(--text2);line-height:1.55;}
+.ibox-q::before{content:'?';position:absolute;left:0;color:var(--accent);font-weight:700;font-size:11px;top:5px;}
+.done-screen{padding:40px 24px;text-align:center;}
+.done-icon{width:48px;height:48px;border-radius:50%;background:var(--green-bg);border:1px solid var(--green-border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.done-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.done-sub{font-size:14px;color:var(--text2);}
+.fbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.filtbtn{font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s;}
+.filtbtn:hover{background:var(--surface2);color:var(--text);}
+.filtbtn.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border);}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:8px;overflow:hidden;transition:border-color .15s;}
+.pcard:hover,.pcard.open{border-color:var(--border2);}
+.pcard.p-done{border-color:var(--border);opacity:.7;}
+.pcard.p-done .ptitle{text-decoration:line-through;text-decoration-color:var(--text3);}
+.pcard.p-current{border-color:var(--accent-border);border-left:3px solid var(--accent);}
+.phead{display:flex;align-items:center;gap:11px;padding:12px 15px;user-select:none;transition:background .1s;}
+.phead:hover{background:var(--surface2);cursor:pointer;}
+.pdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.pnum{font-size:12px;color:var(--text3);min-width:18px;font-family:'SF Mono','Fira Code',Consolas,monospace;}
+.pinfo{flex:1;min-width:0;}
+.ptitle{font-size:14px;font-weight:600;color:var(--text);}
+.pdesc{font-size:12px;color:var(--text2);margin-top:1px;}
+.pmeta{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.pbadge{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500;}
+.b-core{background:rgba(88,166,255,.1);color:#79c0ff;}
+.b-supporting{background:rgba(139,148,158,.12);color:#8b949e;}
+.b-prep{background:rgba(210,153,34,.1);color:#d29922;}
+.pdur{font-size:11px;color:var(--text3);white-space:nowrap;}
+.pprog{font-size:11px;color:var(--text3);white-space:nowrap;font-family:'SF Mono','Fira Code',Consolas,monospace;}
+.pprog.all-done{color:var(--green);}
+.pchev{width:12px;height:12px;color:var(--text3);transition:transform .2s;flex-shrink:0;}
+.pcard.open .pchev{transform:rotate(90deg);}
+.done-check{width:16px;height:16px;color:var(--green);flex-shrink:0;}
+.pbody{display:none;padding:16px;border-top:1px solid var(--border);background:var(--surface2);}
+.pcard.open .pbody{display:block;}
+.blabel{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin:15px 0 8px;}
+.blabel:first-child{margin-top:0;}
+.trow{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.trow:last-child{border-bottom:none;}
+.t-check{width:15px;height:15px;border:1.5px solid var(--border2);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.t-check:hover{border-color:var(--accent);}
+.trow.t-done .t-check{background:var(--green);border-color:var(--green);}
+.trow.t-done .tname{opacity:.5;text-decoration:line-through;text-decoration-color:var(--text3);}
+.tname{font-weight:600;color:var(--text);min-width:175px;flex-shrink:0;}
+.tsub{color:var(--text2);flex:1;font-size:12px;}
+.tag-fam{font-size:10px;padding:1px 6px;border-radius:3px;border:1px solid var(--border2);color:var(--text3);flex-shrink:0;}
+.litem{font-size:13px;padding:4px 0 4px 18px;position:relative;color:var(--text2);line-height:1.55;}
+.larr::before{content:'→';position:absolute;left:0;color:var(--text3);}
+.lbul::before{content:'◆';position:absolute;left:1px;color:var(--text3);font-size:7px;top:7px;}
+.res-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.res-item:last-child{border-bottom:none;}
+.res-link{color:var(--text);font-weight:500;flex:1;}
+.res-link:hover{color:var(--accent);}
+.res-tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500;white-space:nowrap;}
+.tag-free{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.tag-book{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);}
+.tag-video{background:rgba(248,81,73,.08);color:#f85149;border:1px solid rgba(248,81,73,.2);}
+.tag-docs{background:rgba(139,148,158,.1);color:#8b949e;border:1px solid rgba(139,148,158,.2);}
+.tag-paper{background:rgba(210,153,34,.1);color:#d29922;border:1px solid rgba(210,153,34,.2);}
+.phase-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+.act-btn{font-size:12px;padding:6px 13px;border-radius:var(--r);border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s;display:flex;align-items:center;gap:5px;}
+.act-btn:hover{background:var(--surface);color:var(--text);}
+.claude-btn{border-color:var(--accent-border);color:var(--accent);background:var(--accent-bg);}
+.claude-btn:hover{background:rgba(88,166,255,.15);}
+.claude-btn.copied{border-color:var(--green-border);color:var(--green);background:var(--green-bg);}
+.complete-btn.ready{border-color:var(--green-border);color:var(--green);background:var(--green-bg);font-weight:500;}
+.complete-btn.ready:hover{background:rgba(63,185,80,.18);}
+.complete-btn.already{border-color:var(--green-border);color:var(--green);opacity:.6;}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:10px 18px;font-size:13px;color:var(--text);z-index:999;opacity:0;transition:all .25s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+footer{border-top:1px solid var(--border);padding:28px 24px;color:var(--text3);font-size:13px;}
+.footer-inner{max-width:960px;margin:0 auto;}
+.ftit{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;}
+.dstep{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);}
+.dstep:last-child{border-bottom:none;}
+.dnum{width:22px;height:22px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;border:1px solid var(--accent-border);}
+.dtext{color:var(--text2);line-height:1.6;}
+.fnote{margin-top:16px;color:var(--text3);font-size:12px;}
+@media(max-width:720px){.stats-row{grid-template-columns:repeat(3,1fr);}.day-grid{grid-template-columns:1fr;}.ex-grid{grid-template-columns:1fr;}main{padding:18px 14px 60px;}.pmeta .pdur{display:none;}}
+@media(max-width:480px){.stats-row{grid-template-columns:repeat(2,1fr);}.tname{min-width:130px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Robotics SWE <span class="logo-sep">/</span><span class="logo-sub">Interview Roadmap</span></div>
+  <div class="hbtns">
+    <button class="hbtn danger" onclick="resetProgress()">↺ Reset</button>
+    <button class="hbtn" id="theme-btn" onclick="toggleTheme()">☀ Light</button>
+  </div>
+</header>
+<main>
+  <div class="stats-row">
+    <div class="scard"><div class="slabel">Phases</div><div class="sval">9</div></div>
+    <div class="scard"><div class="slabel">Completed</div><div class="sval" id="stat-done">0</div><div class="sunit">/ 9 phases</div></div>
+    <div class="scard"><div class="slabel">Topics done</div><div class="sval" id="stat-topics">0</div><div class="sunit" id="stat-topics-denom">/ 44</div></div>
+    <div class="scard"><div class="slabel">Timeline</div><div class="sval">~30</div><div class="sunit">weeks</div></div>
+    <div class="scard"><div class="slabel">Interview Qs</div><div class="sval">40+</div></div>
+  </div>
+  <div class="prog-outer"><div class="prog-bar-wrap"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div><div class="prog-label" id="prog-label">0% complete</div></div>
+  <div class="pstrip" id="pstrip"></div>
+  <div class="sec-title" id="featured-label">Current phase — detailed study plan</div>
+  <div class="featured"><div id="featured-inner"></div></div>
+  <div class="sec-title" style="margin-top:4px">Full roadmap</div>
+  <div class="fbar" id="fbar"></div>
+  <div id="roadmap"></div>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="ftit">Hosting on GitHub Pages</div>
+    <div class="dstep"><div class="dnum">1</div><div class="dtext">Create a public repo on github.com, e.g. <code>robotics-roadmap</code></div></div>
+    <div class="dstep"><div class="dnum">2</div><div class="dtext">Upload this <code>index.html</code> — drag-and-drop on the repo page works</div></div>
+    <div class="dstep"><div class="dnum">3</div><div class="dtext"><strong>Settings → Pages</strong> → source: Deploy from branch → <code>main</code> → root → Save</div></div>
+    <div class="dstep"><div class="dnum">4</div><div class="dtext">Live in ~60s at <code>https://&lt;username&gt;.github.io/robotics-roadmap/</code></div></div>
+    <div class="fnote">Progress is saved in your browser's localStorage and persists across visits. Use ↺ Reset to start fresh.</div>
+  </div>
+</footer>
+<div id="toast"></div>
+<script>
+const PHASE_WEEKS={
+1:[
+{tab:'Week 1 — Modern C++',title:'Week 1: Modern C++ (17/20)',goal:'Polish your C++ to production standard. Focus on zero-cost abstractions, type safety, and concurrency primitives that appear in robotics codebases and senior interviews.',
+days:[
+{label:'Days 1–2',topic:'C++17 core features',detail:'Structured bindings, if/switch init-statement, std::optional, std::variant, std::any, std::string_view, fold expressions, CTAD'},
+{label:'Days 3–4',topic:'C++20 concepts & ranges',detail:'requires clauses, constrained templates, std::ranges algorithms, range adaptors (views::filter, transform, take), std::span'},
+{label:'Days 5–7',topic:'Templates, RAII & concurrency',detail:'CRTP for static polymorphism, type erasure, perfect forwarding, std::atomic memory ordering (acquire/release/seq_cst), lock-free SPSC pattern'},
+],
+exercises:[
+{diff:'easy',name:'Ring buffer with concepts',desc:'Fixed-size ring buffer in C++20 with a Concept constraining the value type. Support emplace_back, pop_front, full/empty predicates, forward iterators.'},
+{diff:'medium',name:'Type-safe sensor variant',desc:'sensor_msg variant (IMUData, GPSData, OdometryData) dispatched via std::visit + overloaded lambdas. No virtual. Compare generated assembly vs virtual dispatch.'},
+{diff:'medium',name:'CRTP static polymorphism',desc:'Sensor<Derived> base with CRTP read() calling derived::read_impl(). Benchmark vs virtual dispatch over 10M iterations.'},
+{diff:'hard',name:'Lock-free SPSC queue',desc:'Single-producer single-consumer queue via std::atomic head/tail with acquire/release. No mutex. Verify with producer writing 1M items, consumer reading all in order.'},
+],
+interview:['std::optional vs raw pointer — what does optional give you that a pointer does not?','What does if constexpr do at compile time vs a regular constant-condition if?','When does CRTP break down as a substitute for virtual dispatch?','Explain memory order acquire/release with a concrete example.'],
+},
+{tab:'Week 2 — Linear algebra',title:'Week 2: Linear algebra for robotics',goal:'Build the geometric intuition for SLAM, EKF, and kinematics. Key insight: the space of 3D rotations SO(3) is a curved manifold — this changes how you add noise or compose transforms.',
+days:[
+{label:'Days 1–2',topic:'Rotation matrices & SO(3)',detail:'Orthogonality (RᵀR=I, det=1), rotation composition, Rodrigues formula, gimbal lock with ZYX Euler, eigen-decomposition review'},
+{label:'Days 3–4',topic:'Quaternions',detail:'Unit quaternion as axis-angle q=cos(θ/2)+sin(θ/2)·n̂, Hamilton product, conjugate, SLERP derivation, why quaternions avoid gimbal lock'},
+{label:'Days 5–7',topic:'Lie groups: SO(3) and SE(3)',detail:'Lie algebra so(3) as tangent space at identity, hat operator, exponential map (=Rodrigues), log map, SE(3) for rigid transforms, left/right Jacobian for EKF'},
+],
+exercises:[
+{diff:'easy',name:'Rotation3D class',desc:'Construct from axis-angle, ZYX Euler, quaternion. Multiply rotations. Rotate a vector. Verify RᵀR≈I. All constructors must produce identical orientations.'},
+{diff:'easy',name:'Quaternion SLERP from scratch',desc:'Implement SLERP without Eigen::Quaternion::slerp. Print 20 interpolated steps as Euler angles. Handle the q and -q equivalence case.'},
+{diff:'medium',name:'SE(3) rigid body transform',desc:'Transform3D wrapping SO3 + translation. Implement compose, inverse, transformPoint, adjoint (6×6). Test: T * T.inverse() == identity within 1e-9.'},
+{diff:'hard',name:'SO(3) left Jacobian',desc:'Derive and implement left Jacobian J_l of SO(3) exp map. Verify: exp(φ+δ)≈exp(J_l δ)·exp(φ) for small δ via finite differences.'},
+],
+interview:['Why can you not represent all 3D orientations without singularities using three Euler angles?','Derive the Rodrigues rotation formula. What does the skew-symmetric matrix K encode?','What does it mean that SO(3) is a Lie group and why does it matter for EKF?','How do you perturb R∈SO(3) by small δθ without leaving the manifold?'],
+},
+{tab:'Week 3 — Probability',title:'Week 3: Probability & numerical methods',goal:'Build the probabilistic foundations for Kalman filtering and sensor fusion. By the end you should derive KF equations from scratch and explain why numerical stability matters on real hardware.',
+days:[
+{label:'Days 1–2',topic:'Gaussians & Bayes',detail:'Univariate + multivariate Gaussian, marginalisation, conditioning (p(x|y) from joint), Bayes theorem, Gaussian product + convolution identities essential for KF'},
+{label:'Days 3–4',topic:'Covariance & information',detail:'Covariance matrix (symmetric PSD), Mahalanobis distance, chi-squared gating, Fisher information, information form Λ=Σ⁻¹ and ξ=Λμ used in graph SLAM'},
+{label:'Days 5–7',topic:'Numerical methods',detail:'Newton-Raphson, Gauss-Newton + Levenberg-Marquardt for least squares, QR decomposition, Cholesky for PD systems, sparse solvers (Eigen SparseCholesky), finite-diff Jacobian verification'},
+],
+exercises:[
+{diff:'easy',name:'2D Gaussian ellipse',desc:'Given a 2×2 covariance Σ, draw 1σ/2σ/3σ uncertainty ellipses via eigendecomposition. Show how rotation and stretch relate to eigenvectors and eigenvalues.'},
+{diff:'medium',name:'Weighted least squares',desc:'WLS line fitting in Eigen: given noisy (x,y) with per-point variance weights wᵢ, assemble and solve weighted normal equations. Compare with unweighted LS.'},
+{diff:'medium',name:'Cholesky Kalman update',desc:'KF measurement update using Cholesky of S=HPHᵀ+R instead of S⁻¹. Compare numerical accuracy vs LU inverse on ill-conditioned S (κ>10⁶).'},
+{diff:'hard',name:'Gauss-Newton circle fit',desc:'Fit circle (cx,cy,r) to 2D noisy points with Gauss-Newton. Analytical Jacobian. Mahalanobis outlier rejection at χ²(p=0.05). Verify Jacobian with finite differences.'},
+],
+interview:['What does a covariance matrix represent geometrically — eigenvalues and eigenvectors?','Derive the Gaussian product: given p(x)=N(μ₁,Σ₁) and p(z|x)=N(Hx,R), what is p(x|z)?','What is Mahalanobis distance and why is it the right metric for sensor gating?','Why use Cholesky for the Kalman update instead of a matrix inverse?'],
+},
+],
+2:[
+{tab:'Week 1 — Node model',title:'Week 1: ROS 2 node model and communication',goal:'Understand the building block of every ROS 2 system. The node lifecycle and executor model directly affect real-time performance and is a common senior interview topic.',
+days:[
+{label:'Days 1–2',topic:'rclcpp node fundamentals',detail:'Node vs LifecycleNode, spin vs spin_some vs spin_until_future_complete, single-threaded vs multi-threaded executor, callback groups (MutuallyExclusive vs Reentrant)'},
+{label:'Days 3–4',topic:'Topics and QoS',detail:'Publisher/subscriber API, QoS profiles (depth, reliability RELIABLE/BEST_EFFORT, durability TRANSIENT_LOCAL/VOLATILE), rmw abstraction, DDS discovery'},
+{label:'Days 5–7',topic:'Services and actions',detail:'Synchronous vs async service call, action server/client (goal, feedback, result), when to use each, action preemption and cancellation patterns'},
+],
+exercises:[
+{diff:'easy',name:'Lifecycle sensor driver',desc:'Write a LifecycleNode that opens a sensor on configure(), starts publishing on activate(), stops on deactivate(), and releases resources on cleanup().'},
+{diff:'medium',name:'QoS stress test',desc:'Publisher with BEST_EFFORT QoS publishing at 500Hz. Subscriber with RELIABLE QoS. Measure missed message rate. Swap to RELIABLE publisher and compare.'},
+{diff:'medium',name:'Action move-to-goal',desc:'Implement a MoveToGoal action server. Client sends target pose. Server publishes feedback (distance remaining) every 100ms. Server aborts if goal unreachable after 10s.'},
+{diff:'hard',name:'Multi-threaded pipeline',desc:'Two Reentrant callback groups: one for fast sensor callbacks (1kHz), one for slow processing (10Hz). Verify with ros2 trace that no callback blocks the other.'},
+],
+interview:['How does DDS underpin ROS 2 — what is discovery and how does it differ from ROS 1 master?','Explain QoS TRANSIENT_LOCAL — when would a late-joining subscriber need it?','What is the difference between MutuallyExclusive and Reentrant callback groups?','When would you choose an action over a service? Design the interface for a navigation goal.'],
+},
+{tab:'Week 2 — TF2 & URDF',title:'Week 2: TF2 transforms and robot modeling',goal:'TF2 is one of the most-tested topics in robotics interviews. Understanding the frame graph and how to avoid lookup race conditions is essential.',
+days:[
+{label:'Days 1–2',topic:'TF2 frame graph',detail:'StaticTransformBroadcaster vs TransformBroadcaster, transform lookup with timeout, tf2_ros::Buffer, common race condition patterns and how to fix them'},
+{label:'Days 3–4',topic:'URDF and XACRO',detail:'Links (visual, collision, inertial), joints (fixed, revolute, prismatic, continuous), DH parameters to URDF, XACRO macros for repetitive structures, robot_state_publisher'},
+{label:'Days 5–7',topic:'Launch system and parameters',detail:'Python launch files, node composition (load_composable_node), parameter YAML files, runtime parameter reconfigure via ros2 param, remap and namespace patterns'},
+],
+exercises:[
+{diff:'easy',name:'Multi-frame TF tree',desc:'Broadcast transforms: world→odom→base_link→camera_link→camera_optical_frame. Use rviz2 to visualise. Introduce a 100ms delay on one broadcaster and observe the stale transform error.'},
+{diff:'medium',name:'Custom URDF robot',desc:'Write URDF for a differential-drive robot: base, two drive wheels, one caster. Add correct inertia tensors. Load in Gazebo and verify the joint tree in rviz2.'},
+{diff:'medium',name:'Composable node launch',desc:'Launch three nodes as composable components in one process. Compare CPU and latency vs three separate processes using ros2 topic hz and top.'},
+{diff:'hard',name:'TF lookup race fix',desc:'Reproduce a lookup_transform TimeoutException by publishing a transform at 10Hz and looking it up at 100Hz. Fix it using waitForTransform with an appropriate timeout policy.'},
+],
+interview:['How do you avoid TF lookup_transform race conditions in a multi-node pipeline?','What is the difference between StaticTransformBroadcaster and TransformBroadcaster?','Why would you use composable nodes? What overhead do they remove?','Walk through the URDF inertia tensor — what happens in Gazebo if you set it wrong?'],
+},
+{tab:'Week 3 — Debug & DDS',title:'Week 3: Debugging, bags, and DDS internals',goal:'Production robotics work is 50% debugging. This week covers the full toolchain plus DDS internals that appear in senior interviews about latency and network architecture.',
+days:[
+{label:'Days 1–2',topic:'Bags, rqt, PlotJuggler',detail:'ros2 bag record/play, filtering by topic, rqt_graph for architecture visualisation, PlotJuggler for time-series analysis, rqt_console for log filtering'},
+{label:'Days 3–4',topic:'ros2 trace and profiling',detail:'LTTng-based ros2 trace, tracetools_analysis for latency measurement, identifying callback jitter, measuring topic-to-topic latency across nodes'},
+{label:'Days 5–7',topic:'DDS tuning',detail:'FastDDS vs CycloneDDS tradeoffs, QoS depth tuning for different message rates, network namespacing for multi-robot, multicast vs unicast discovery, ROS_DOMAIN_ID isolation'},
+],
+exercises:[
+{diff:'easy',name:'Bag-based regression test',desc:'Record a 30-second bag of sensor topics. Write a test node that replays it and checks output topics match expected values. Use this as a CI smoke test.'},
+{diff:'medium',name:'Latency measurement',desc:'Use ros2 trace to measure end-to-end latency from sensor callback to control output. Identify the bottleneck node. Reduce latency by 30% using executor tuning.'},
+{diff:'medium',name:'Multi-robot isolation',desc:'Launch two simulated robots in separate ROS_DOMAIN_IDs. Show they cannot see each other\'s topics. Then bridge one specific topic between them using ros2 domain bridge.'},
+{diff:'hard',name:'DDS QoS optimisation',desc:'LiDAR topic at 20Hz with 100KB messages. Benchmark 3 configs: RELIABLE+depth 1, RELIABLE+depth 10, BEST_EFFORT+depth 1. Measure CPU, latency, and drop rate under a 100Mbps network cap.'},
+],
+interview:['How would you profile and reduce latency in a sensor processing node end-to-end?','What is ROS_DOMAIN_ID and how do you use it for multi-robot isolation?','Compare FastDDS and CycloneDDS — when would you choose each?','How do you write a deterministic regression test for a ROS 2 pipeline using bags?'],
+},
+],
+3:[
+{tab:'Week 1 — Kinematics',title:'Week 1: Forward & inverse kinematics',goal:'Kinematics is the geometry of robot motion. Getting comfortable deriving FK and understanding where IK fails numerically is essential for any arm or mobile manipulator role.',
+days:[
+{label:'Days 1–2',topic:'Forward kinematics & DH',detail:'Denavit-Hartenberg parameters (a, d, α, θ), homogeneous transform chain T_0_n = T_01·T_12·...·T_n-1_n, workspace computation, visualising FK in rviz2'},
+{label:'Days 3–4',topic:'Jacobian matrix',detail:'Geometric Jacobian (linear + angular velocity), analytic Jacobian, Jacobian singularities (rank deficiency), damped least squares (DLS) for near-singular configurations'},
+{label:'Days 5–7',topic:'Inverse kinematics',detail:'Closed-form IK (analytical) for 6-DOF arms, numerical IK via Newton-Raphson (J⁺ pseudoinverse), CCD (Cyclic Coordinate Descent) for redundant robots, IK in MoveIt 2'},
+],
+exercises:[
+{diff:'easy',name:'2-DOF planar FK',desc:'Implement FK for a 2-link planar arm. Given joint angles θ₁, θ₂ and link lengths l₁, l₂, compute end-effector (x,y). Plot the reachable workspace.'},
+{diff:'medium',name:'Geometric Jacobian',desc:'Derive and implement the 6×n Jacobian for a 3-DOF arm. Verify numerically via finite differences. Compute the condition number and identify a singular configuration.'},
+{diff:'medium',name:'Newton-Raphson IK',desc:'Implement iterative IK: given target pose T_target, iterate J⁺·(T_target - FK(θ)) until ||error||<1e-6. Add DLS regularisation to handle near-singular configs.'},
+{diff:'hard',name:'MoveIt 2 custom IK plugin',desc:'Implement a custom IKSolverPlugin for MoveIt 2 that wraps your Newton-Raphson solver. Register it in the robot SRDF and benchmark solve time vs KDL.'},
+],
+interview:['What is a Jacobian singularity and what happens physically at the robot when you hit one?','Derive the pseudoinverse J⁺ = Jᵀ(JJᵀ)⁻¹. What does it minimise?','Explain damped least squares IK — what problem does it solve vs plain pseudoinverse?','How does MoveIt 2 handle IK — what are the available solvers and their tradeoffs?'],
+},
+{tab:'Week 2 — Dynamics & PID',title:'Week 2: Rigid body dynamics and PID control',goal:'You need dynamics to simulate robots realistically and to understand why controllers fail. PID is in every robot ever built — knowing its failure modes impresses interviewers.',
+days:[
+{label:'Days 1–2',topic:'Rigid body dynamics',detail:'Newton-Euler forward dynamics, Lagrangian mechanics (kinetic - potential energy), inertia tensor computation, equations of motion M(q)q̈ + C(q,q̇)q̇ + G(q) = τ'},
+{label:'Days 3–4',topic:'PID control',detail:'Continuous vs discrete-time PID, anti-windup strategies (back-calculation, clamping), derivative filter (low-pass on D term), cascade PID for position+velocity, Ziegler-Nichols tuning'},
+{label:'Days 5–7',topic:'State-space and stability',detail:'State-space representation ẋ=Ax+Bu, y=Cx, Laplace/z-transform, pole placement intuition, BIBO stability, Lyapunov stability overview for robotics context'},
+],
+exercises:[
+{diff:'easy',name:'Discrete PID class',desc:'Implement a discrete PID controller with anti-windup clamping and derivative filter. Tune it to control simulated 1D point mass to a target with settling time < 2s and overshoot < 10%.'},
+{diff:'medium',name:'Cascade PID',desc:'Outer loop: position PID → velocity setpoint. Inner loop: velocity PID → force/torque. Tune both loops for a 1D robot. Show inner loop must be 5-10× faster than outer.'},
+{diff:'medium',name:'Inertia tensor',desc:'Compute inertia tensor analytically for a solid cylinder and a hollow sphere. Verify numerically by integrating mass distribution. Use the parallel axis theorem to shift to a different reference frame.'},
+{diff:'hard',name:'LQR controller',desc:'Implement Linear Quadratic Regulator for a cart-pole system. Solve the discrete-time Riccati equation. Compare LQR vs hand-tuned PID on settling time and energy cost.'},
+],
+interview:['Walk through the equation of motion M(q)q̈ + C(q,q̇)q̇ + G(q) = τ — what does each term represent?','What is integral windup and what happens to the robot if you do not handle it?','Why must the inner loop of a cascade PID be significantly faster than the outer loop?','What is Lyapunov stability and how is it used to prove a controller is stable?'],
+},
+{tab:'Week 3 — MPC & Planning',title:'Week 3: MPC, odometry, and motion planning',goal:'MPC is increasingly common in real robotics products. Combined with a solid understanding of differential drive odometry, this week rounds out the control fundamentals.',
+days:[
+{label:'Days 1–2',topic:'Differential drive odometry',detail:'Wheel encoder model (ticks→rad→distance), ICC (Instantaneous Centre of Curvature), dead-reckoning equations, error propagation (covariance through nonlinear transform)'},
+{label:'Days 3–4',topic:'Model predictive control',detail:'Receding horizon concept, state-space prediction model, quadratic cost function (tracking + control effort), OSQP/qpOASES solvers, MPC vs PID tradeoffs'},
+{label:'Days 5–7',topic:'Motion planning',detail:'Configuration space, RRT vs RRT* (asymptotic optimality proof), PRM for static environments, trajectory optimisation (CHOMP gradient descent), STOMP stochastic approach'},
+],
+exercises:[
+{diff:'easy',name:'Dead-reckoning simulator',desc:'Simulate a differential-drive robot from encoder tick counts. Add Gaussian noise to each wheel. Plot the growing position uncertainty ellipse as the robot travels.'},
+{diff:'medium',name:'RRT* path planner',desc:'Implement RRT* in a 2D occupancy grid. Plot how path cost decreases with iterations. Compare final path cost vs basic RRT. Measure solve time vs map size.'},
+{diff:'medium',name:'MPC velocity controller',desc:'Implement a simple MPC for 1D velocity tracking with horizon N=10. Use a quadratic cost penalising tracking error and control effort. Solve with OSQP. Compare vs PID on a step input.'},
+{diff:'hard',name:'Nav2 custom planner plugin',desc:'Implement a NavFn-compatible global planner plugin for Nav2. Register it in the YAML config. Compare planned path quality vs the default NavFn on a cluttered map.'},
+],
+interview:['Derive wheel odometry equations for a differential-drive robot from first principles. What frame is the pose expressed in?','How does RRT* achieve asymptotic optimality? What is the key rewiring step?','Compare MPC and PID — under what conditions is MPC worth the extra computational cost?','What is the configuration space and why does motion planning happen there instead of task space?'],
+},
+],
+4:[
+{tab:'Week 1 — Kalman filter',title:'Week 1: Kalman filter derivation and implementation',goal:'The KF is the foundation of all probabilistic state estimation. Deriving it from Bayesian conditioning is the most common robotics interview question — do not skip this.',
+days:[
+{label:'Days 1–2',topic:'KF derivation from Bayes',detail:'State-space model (prediction: xₖ=Axₖ₋₁+Buₖ+wₖ), measurement model (zₖ=Hxₖ+vₖ), MMSE estimator derivation, Kalman gain as covariance-weighted interpolation'},
+{label:'Days 3–4',topic:'KF implementation in C++',detail:'Matrix representation with Eigen, predict step (x̂⁻, P⁻), update step (K, x̂, P), information form (Λ=P⁻¹, ξ=Λx̂), numerical stability via Joseph form P update'},
+{label:'Days 5–7',topic:'1D and 2D examples',detail:'1D constant-velocity model with GPS updates, 2D position tracking with radar (range+bearing), tuning Q and R empirically via residual analysis (innovation covariance)'},
+],
+exercises:[
+{diff:'easy',name:'1D KF constant velocity',desc:'Track a 1D object with state [position, velocity]. Process model: constant velocity + Gaussian acceleration noise. Measurement: noisy position. Tune Q and R and plot estimated vs true trajectory.'},
+{diff:'medium',name:'KF from scratch in Eigen',desc:'Implement a generic KF class templated on state dim and measurement dim. Methods: predict(A,B,u,Q) and update(H,z,R). Verify on the 1D example above.'},
+{diff:'medium',name:'Innovation monitoring',desc:'Add innovation monitoring to your KF: compute Sₖ=HPₖ⁻Hᵀ+R and normalised innovation squared (NIS). Flag outliers where NIS>χ²(p=0.95). Test with an injected spurious measurement.'},
+{diff:'hard',name:'Joseph form stability test',desc:'Implement both naive P update (P=(I-KH)P⁻) and Joseph form P=((I-KH)P⁻(I-KH)ᵀ+KRKᵀ). Run 10000 iterations with small noise. Show naive form produces non-PSD P; Joseph form does not.'},
+],
+interview:['Derive the Kalman gain from scratch. What does it represent geometrically?','What is the innovation and what does a consistently large innovation tell you?','What is the Joseph form P update and why is it numerically more stable than (I-KH)P⁻?','Explain the difference between Q and R — how do you tune them in practice without a model?'],
+},
+{tab:'Week 2 — EKF',title:'Week 2: Extended Kalman filter and IMU fusion',goal:'The EKF is the workhorse of real-world robotics. Every self-driving car, drone, and mobile robot uses it or a close variant. Deriving Jacobians under pressure is a core interview skill.',
+days:[
+{label:'Days 1–2',topic:'EKF linearisation',detail:'First-order Taylor expansion of nonlinear f(x) and h(x), Fₖ=∂f/∂x|x̂ and Hₖ=∂h/∂x|x̂, when linearisation fails (highly nonlinear systems, large uncertainty)'},
+{label:'Days 3–4',topic:'IMU + odometry EKF',detail:'6-DOF IMU model (accelerometer, gyro, biases), wheel odometry as pseudo-measurement, state vector design [p, v, R, b_acc, b_gyro], covariance initialisation strategy'},
+{label:'Days 5–7',topic:'Error-state EKF (ESKF)',detail:'Error state δx around nominal trajectory, advantage over direct-state EKF on SO(3), reset step after update, why ESKF is preferred for IMU-heavy systems (VIO, drones)'},
+],
+exercises:[
+{diff:'easy',name:'EKF 2D robot',desc:'EKF for a differential-drive robot: state [x,y,θ], process model = odometry, measurement = GPS [x,y]. Compute Fₖ analytically. Simulate with Monte Carlo ground truth.'},
+{diff:'medium',name:'Analytical vs numerical Jacobian',desc:'For your EKF process model, compute the Jacobian analytically and via finite differences. Show they match to 1e-6. Time both: analytical should be at least 10× faster.'},
+{diff:'medium',name:'IMU preintegration basics',desc:'Integrate raw IMU data (accel+gyro at 200Hz) over a 100ms window. Account for bias. Compare integrated pose vs ground truth. Show how bias causes drift.'},
+{diff:'hard',name:'Error-state KF for orientation',desc:'Implement ESKF for 3D orientation estimation using gyro. Nominal state: quaternion. Error state: δθ∈ℝ³. Correct with accelerometer gravity measurement. Show ESKF stays on SO(3) while naive EKF does not.'},
+],
+interview:['Walk through EKF predict and update equations — what does each matrix represent physically?','When does EKF linearisation fail and cause filter divergence?','Why is the error-state KF preferred over direct-state KF for IMU integration?','How do you initialise the covariance matrix P₀ — what happens if it is too small or too large?'],
+},
+{tab:'Week 3 — UKF & Particles',title:'Week 3: Unscented KF and particle filters',goal:'Knowing when EKF is not good enough — and what to use instead — is what separates senior from junior estimation engineers.',
+days:[
+{label:'Days 1–2',topic:'Unscented transform & UKF',detail:'Sigma point generation (2n+1 points), UT mean and covariance propagation through nonlinear function, α/β/κ tuning, UKF predict and update steps'},
+{label:'Days 3–4',topic:'Particle filter / MCL',detail:'Importance sampling principle, particle weight update p(zₖ|xₖ), systematic resampling, particle degeneracy (weight collapse), KLD-sampling adaptive particle count'},
+{label:'Days 5–7',topic:'Comparison and selection',detail:'KF vs EKF vs UKF vs PF — accuracy vs cost tradeoffs, dimensionality curse for PF, Rao-Blackwellisation, FastSLAM combining PF with per-landmark KF'},
+],
+exercises:[
+{diff:'easy',name:'Unscented transform demo',desc:'Compare mean and covariance propagation of y=f(x)=[cos(x), sin(x)] through (a) linearised EKF, (b) unscented transform, (c) 10000 Monte Carlo samples. Show UT wins for this nonlinear case.'},
+{diff:'medium',name:'UKF vs EKF on pendulum',desc:'Implement both EKF and UKF for a nonlinear pendulum. Run 1000 trials with random init. Compare RMSE. Show regimes where each wins.'},
+{diff:'medium',name:'2D particle filter',desc:'Particle filter for localisation in a 2D room with known wall landmarks. 500 particles. Systematic resampling. Test convergence from uniform init and from near-correct init.'},
+{diff:'hard',name:'Adaptive KLD particle filter',desc:'Implement KLD-sampling to dynamically adjust particle count: more particles when uncertainty is high, fewer when converged. Compare computational cost vs fixed-count PF at same accuracy.'},
+],
+interview:['What are sigma points and why does the unscented transform use 2n+1 of them?','When would you choose a particle filter over a UKF?','What is particle degeneracy and how does resampling fix it? What problem does resampling introduce?','Explain Rao-Blackwellisation — how does FastSLAM exploit it to scale to many landmarks?'],
+},
+{tab:'Week 4 — Fusion stack',title:'Week 4: IMU preintegration and robot_localization',goal:'This week connects theory to the ROS 2 tooling you will use on day one of a robotics job. robot_localization is in nearly every mobile robot stack.',
+days:[
+{label:'Days 1–2',topic:'IMU preintegration on manifold',detail:'Preintegrating Δp, Δv, ΔR over IMU window, bias correction via first-order update, noise covariance propagation, preintegrated measurement model for graph SLAM'},
+{label:'Days 3–4',topic:'robot_localization configuration',detail:'ekf_node and ukf_node parameters, sensor input YAML (odom0, imu0, gps0), frame conventions (world, odom, base_link), covariance tuning strategy, diagnosing divergence'},
+{label:'Days 5–7',topic:'GPS + IMU + odometry fusion',detail:'navsat_transform_node for GPS→odom conversion, UTM projection, datum setup, handling GPS outages gracefully, visualising fusion quality in PlotJuggler'},
+],
+exercises:[
+{diff:'easy',name:'robot_localization basic setup',desc:'Configure ekf_node fusing wheel odometry + IMU for a simulated robot. Tune process noise covariance. Plot estimated vs ground truth position error over a 100m path.'},
+{diff:'medium',name:'GPS fusion with navsat_transform',desc:'Add GPS to your robot_localization setup via navsat_transform_node. Simulate GPS dropouts of 5s. Show how covariance grows during outage and recovers on re-acquisition.'},
+{diff:'medium',name:'IMU bias estimation',desc:'Add IMU bias states to your EKF (6 extra states: 3 accel + 3 gyro bias). Show that estimated bias converges to injected ground-truth bias after ~30 seconds of motion.'},
+{diff:'hard',name:'Multi-sensor timing',desc:'Fuse sensors running at different rates (IMU 200Hz, odometry 50Hz, GPS 1Hz) in robot_localization. Use message_filters::TimeSynchronizer to align topics. Measure and minimise temporal misalignment error.'},
+],
+interview:['How does robot_localization handle sensors running at different rates?','What is the difference between the world frame and the odom frame in REP 105?','How do you diagnose filter divergence in robot_localization — what do you look at first?','Explain IMU preintegration on manifold — why not just integrate in a Euclidean state?'],
+},
+],
+5:[
+{tab:'Week 1 — Mapping & EKF-SLAM',title:'Week 1: Occupancy grids and feature-based SLAM',goal:'Start with the fundamentals of building a map. EKF-SLAM is rarely used at scale but its derivation underpins every modern SLAM algorithm and appears heavily in interviews.',
+days:[
+{label:'Days 1–2',topic:'Occupancy grid mapping',detail:'Log-odds representation l=log(p/(1-p)), inverse sensor model for LiDAR/sonar, ray casting update, evidence accumulation, grid resolution tradeoffs'},
+{label:'Days 3–4',topic:'Feature extraction & landmarks',detail:'Line/corner extraction from LiDAR, ORB/FAST features from camera, landmark representation, re-detection across frames, descriptor matching for association'},
+{label:'Days 5–7',topic:'EKF-SLAM formulation',detail:'Joint state vector [robot pose, landmark positions], augmentation on new landmark, prediction step (only robot state moves), update step (one landmark at a time vs batch)'},
+],
+exercises:[
+{diff:'easy',name:'Occupancy grid from LiDAR',desc:'Build a 2D occupancy grid from simulated LiDAR scans using log-odds update. Visualise the map evolving as a simulated robot drives a figure-8. Show log-odds converging.'},
+{diff:'medium',name:'EKF-SLAM from scratch',desc:'Implement 2D EKF-SLAM with point landmarks. State: [x,y,θ, lx₁,ly₁, ..., lxₙ,lyₙ]. Process: odometry. Measurement: range+bearing to landmarks. Run on 10 landmarks, 200 steps.'},
+{diff:'medium',name:'NN data association',desc:'Add nearest-neighbour data association to your EKF-SLAM. Handle the case where a measurement matches no existing landmark (create new landmark) vs matches one (update).'},
+{diff:'hard',name:'JCBB data association',desc:'Replace NN with Joint Compatibility Branch and Bound (JCBB). Generate a synthetic scenario where NN associates incorrectly but JCBB succeeds. Measure runtime vs NN.'},
+],
+interview:['Explain the data association problem in SLAM — why is it fundamentally hard?','How does EKF-SLAM scale with the number of landmarks — what is the complexity?','What is the joint compatibility test in JCBB and why is it better than individual compatibility?','Why does the EKF-SLAM covariance matrix have off-diagonal correlations between landmarks?'],
+},
+{tab:'Week 2 — Graph SLAM',title:'Week 2: Graph-based SLAM and loop closure',goal:'Graph SLAM is the dominant approach in all modern systems (ORB-SLAM3, Cartographer, LIO-SAM). Understanding factor graphs and pose graph optimisation is non-negotiable.',
+days:[
+{label:'Days 1–2',topic:'Factor graphs',detail:'Variable nodes (poses, landmarks) vs factor nodes (measurements, priors), factor graph representation, information matrix Ω, sparse structure exploitation'},
+{label:'Days 3–4',topic:'Pose graph optimisation',detail:'Relative pose constraints, loop closure as a long-range constraint, residual formulation, Gauss-Newton solver, g2o and GTSAM as backends, iSAM2 incremental update'},
+{label:'Days 5–7',topic:'Loop closure detection',detail:'Scan matching for LiDAR (ICP-based), bag-of-words for visual (DBoW2), place recognition challenge, false loop closure catastrophic effect, verification step (geometric check)'},
+],
+exercises:[
+{diff:'easy',name:'Pose graph 2D',desc:'Build a 2D pose graph from odometry edges. Add a single loop closure constraint. Solve with g2o. Visualise how the trajectory deforms to satisfy the loop closure.'},
+{diff:'medium',name:'g2o pose graph optimiser',desc:'Implement a pose graph optimiser wrapping g2o for 3D poses (SE3 nodes, SE3 edges). Run on the KITTI odometry dataset sequence 00. Measure ATE before and after optimisation.'},
+{diff:'medium',name:'DBoW2 loop detection',desc:'Use DBoW2 vocabulary to detect loop closures in a sequence of ORB-feature images. Tune the score threshold to minimise false positives. Visualise true vs false detections.'},
+{diff:'hard',name:'iSAM2 incremental update',desc:'Use GTSAM\'s iSAM2 to build a growing factor graph in real-time. Add new pose nodes at 10Hz. Show that iSAM2 re-linearises only the affected part of the graph (measure updated variables vs total).'},
+],
+interview:['What is loop closure and why does SLAM drift without it?','Explain the sparse structure of the SLAM information matrix — why does it make optimisation tractable?','What makes a false loop closure catastrophic? How do you guard against it?','Compare iSAM2 and batch Gauss-Newton — when is incremental update more efficient?'],
+},
+{tab:'Week 3 — LiDAR & Visual Odometry',title:'Week 3: LiDAR odometry and visual odometry',goal:'LO and VO are the front-end of any SLAM system — they produce the pose increments that feed the back-end graph. Deep knowledge of their failure modes is critical.',
+days:[
+{label:'Days 1–2',topic:'ICP and NDT',detail:'Point-to-point ICP, point-to-plane ICP (faster convergence), Normal Distributions Transform (NDT) as a voxel-based alternative, convergence basin comparison, when each fails'},
+{label:'Days 3–4',topic:'LOAM / LIO-SAM architecture',detail:'Feature extraction (edge + planar), scan-to-map matching, IMU preintegration as initial guess, tightly-coupled vs loosely-coupled LiDAR-IMU, keyframe selection strategy'},
+{label:'Days 5–7',topic:'Visual odometry',detail:'Essential matrix from 5-point algorithm (Nister), pose from matched feature pairs via PnP (EPnP, P3P), bundle adjustment over sliding window (Ceres/g2o), tracking loss detection'},
+],
+exercises:[
+{diff:'easy',name:'Point-to-plane ICP',desc:'Implement point-to-plane ICP for 2D scan matching. Compare convergence speed vs point-to-point ICP on 100 random initial offsets. Show point-to-plane converges in fewer iterations.'},
+{diff:'medium',name:'VO with ORB and PnP',desc:'Implement mono VO: detect ORB → match with BFMatcher+ratio test → recover essential matrix → decompose to R,t → PnP for subsequent frames. Run on KITTI sequence 00. Plot trajectory.'},
+{diff:'medium',name:'NDT scan matching',desc:'Implement NDT scan matching. Build a voxel grid of normal distributions from the reference scan. Optimise the source scan pose to maximise likelihood. Compare to ICP on a cluttered environment.'},
+{diff:'hard',name:'Sliding window bundle adjustment',desc:'Implement a sliding window BA of 5 keyframes using g2o. Marginalise the oldest frame as a prior. Compare trajectory accuracy to no-BA VO on a sequence with significant rotation.'},
+],
+interview:['Compare ICP and NDT — what are the tradeoffs in speed, accuracy, and convergence basin?','How does the 5-point algorithm recover the essential matrix — what are the degeneracy cases?','What is the difference between tightly-coupled and loosely-coupled LiDAR-IMU odometry?','What causes visual odometry to drift and how does bundle adjustment reduce it?'],
+},
+{tab:'Week 4 — Systems & Nav2',title:'Week 4: Full SLAM systems and Nav2 stack',goal:'Understand production SLAM systems at architecture level and know how to deploy Nav2 — the standard navigation stack for mobile robots in ROS 2.',
+days:[
+{label:'Days 1–2',topic:'ORB-SLAM3 architecture',detail:'Atlas multi-map system, tracking→local mapping→loop closing threads, map merging, place recognition (DBoW3), relocalization after tracking loss, mono/stereo/RGB-D/IMU modes'},
+{label:'Days 3–4',topic:'Cartographer and LIO-SAM',detail:'Cartographer: submap-based 2D/3D SLAM, sparse pose adjustment, loop closure via branch and bound. LIO-SAM: tightly-coupled LiDAR+IMU, factor graph with GPS, scan matching'},
+{label:'Days 5–7',topic:'Nav2 full stack',detail:'AMCL adaptive MCL for localisation, costmap2d layers (static, obstacle, inflation, voxel), BT Navigator with BehaviorTree.CPP, regulated pure pursuit controller, recovery behaviours'},
+],
+exercises:[
+{diff:'easy',name:'Cartographer on rosbag',desc:'Run Cartographer on the ROS 2 Turtlebot3 rosbag dataset. Tune map_builder and trajectory_builder_2d params. Compare map quality at different update_gain_threshold values.'},
+{diff:'medium',name:'Nav2 full setup',desc:'Configure Nav2 for a simulated Turtlebot3: AMCL with known map, costmap with obstacle and inflation layers, NavFn global planner, DWB local planner. Navigate a 5-waypoint route.'},
+{diff:'medium',name:'Custom BT recovery',desc:'Write a custom BehaviorTree.CPP action node that spins the robot 360° to recover from localisation failure. Register it in the Nav2 BT XML and trigger it on AMCL covariance threshold.'},
+{diff:'hard',name:'LIO-SAM on outdoor data',desc:'Run LIO-SAM on the MulRan dataset (outdoor LiDAR+IMU). Tune the IMU preintegration covariances. Enable GPS factor. Compare ATE with and without GPS loop closure.'},
+],
+interview:['How does ORB-SLAM3 handle relocalization after tracking loss — what is the Atlas system?','Walk through Nav2 costmap layers: what does each one do and in what order are they applied?','Compare Cartographer and LIO-SAM — when would you choose each for a real deployment?','What is AMCL and how does it differ from a plain particle filter for localisation?'],
+},
+],
+6:[
+{tab:'Week 1 — Geometry & Features',title:'Week 1: Camera geometry and feature-based methods',goal:'Camera geometry is tested in nearly every robotics interview. Deriving the projection matrix and explaining RANSAC under pressure is a baseline expectation for vision-heavy roles.',
+days:[
+{label:'Days 1–2',topic:'Camera models & calibration',detail:'Pinhole model (intrinsic matrix K), radial+tangential distortion, Zhang calibration (homographies from chessboard), reprojection error minimisation, fisheye camera (equidistant model)'},
+{label:'Days 3–4',topic:'Feature detection & matching',detail:'FAST corner detector, ORB (FAST+BRIEF with orientation), SIFT (scale-space extrema, gradient histograms), FLANN/BFMatcher, Lowe ratio test, handling symmetric scenes'},
+{label:'Days 5–7',topic:'Epipolar geometry',detail:'Fundamental matrix F (pixel→pixel), essential matrix E (normalised coords), 8-point algorithm, 5-point algorithm (Nister), RANSAC for outlier rejection, triangulation (DLT + linear triangulation)'},
+],
+exercises:[
+{diff:'easy',name:'Camera calibration',desc:'Calibrate a real or simulated camera using OpenCV calibrateCamera with a 9×6 chessboard pattern (minimum 15 images). Report K, distortion coefficients, and mean reprojection error (target <0.5 px).'},
+{diff:'medium',name:'ORB feature matching pipeline',desc:'Detect ORB features in two images of the same scene from different viewpoints. Match with BFMatcher+ratio test. Draw only inlier matches. Compute match inlier rate and mean descriptor distance.'},
+{diff:'medium',name:'Essential matrix from scratch',desc:'Implement the 8-point algorithm for essential matrix estimation. Add RANSAC wrapper. Decompose E into R,t using SVD. Verify by checking epipolar constraint x\'ᵀFx≈0 for inliers.'},
+{diff:'hard',name:'Triangulation accuracy study',desc:'Triangulate matched points using DLT and optimal triangulation (minimise reprojection). Compare 3D reconstruction error vs noise level in 2D matches. Show optimal beats DLT above 1px noise.'},
+],
+interview:['Derive the perspective projection matrix from a 3D world point to a 2D pixel — go from scratch.','Explain RANSAC: minimum sample set, inlier model, how you set iteration count from desired confidence.','What is the epipolar constraint and why does it reduce stereo matching from 2D to 1D search?','What is the difference between the fundamental matrix and the essential matrix?'],
+},
+{tab:'Week 2 — Stereo & 3D',title:'Week 2: Stereo vision, optical flow, and 3D reconstruction',goal:'Depth from stereo and SfM are the workhorses of robot perception. If you built a 3D reconstruction pipeline, this week should feel like reinforcing what you already know.',
+days:[
+{label:'Days 1–2',topic:'Stereo vision',detail:'Stereo rectification (Bouguet algorithm), disparity search (block matching, SGM), sub-pixel refinement, disparity-to-depth d→Z=fB/d, stereo matching failure modes (texture-less, occlusion)'},
+{label:'Days 3–4',topic:'Optical flow',detail:'Lucas-Kanade sparse flow (KLT tracker), pyramid implementation for large displacements, Farneback dense flow, Horn-Schunck energy formulation, deep flow (PWC-Net overview)'},
+{label:'Days 5–7',topic:'Structure from Motion (SfM)',detail:'COLMAP pipeline (feature extraction → matching → incremental SfM → dense MVS), bundle adjustment cost function, gauge freedom and fixing it, dense point cloud from MVS'},
+],
+exercises:[
+{diff:'easy',name:'Stereo depth map',desc:'Calibrate a stereo pair, rectify images, run StereoBM or StereoSGBM. Colour-map disparity. Reproject to 3D pointcloud. Compare depth error vs known object distances.'},
+{diff:'medium',name:'KLT tracker',desc:'Implement a pyramid Lucas-Kanade optical flow tracker. Track 300 FAST features across a video sequence. Re-detect features when count drops below 100. Visualise track lengths.'},
+{diff:'medium',name:'COLMAP SfM',desc:'Run COLMAP on 30+ photos of an object taken from different angles. Extract the dense point cloud. Measure reconstruction completeness and accuracy against a known dimension.'},
+{diff:'hard',name:'Stereo VO pipeline',desc:'Chain stereo calibration → rectification → SGM disparity → feature matching across frames → pose via stereo PnP → accumulate trajectory. Run on KITTI stereo sequence. Compute ATE.'},
+],
+interview:['What is the epipolar constraint in stereo and why does it reduce matching to a 1D search?','What are the failure modes of SGM stereo matching — when does it produce bad disparity?','Explain the bundle adjustment cost function — what is being minimised and why is it nonlinear?','How does COLMAP handle the gauge freedom in SfM — what constraint fixes the scale?'],
+},
+{tab:'Week 3 — Detection',title:'Week 3: Object detection and deep features',goal:'Modern robotics perception is driven by learned detectors. Understanding the architecture decisions and training choices is essential for any role involving a camera.',
+days:[
+{label:'Days 1–2',topic:'Detection architectures',detail:'Two-stage (R-CNN family: anchor proposals → ROI align → classification+regression) vs one-stage (YOLO: grid-based, anchor-free heads), FPN for multi-scale, NMS and soft-NMS'},
+{label:'Days 3–4',topic:'YOLOv8 deep dive',detail:'Anchor-free head (C2f blocks), decoupled classification+regression heads, task-aligned assigner, DistIoU loss, mosaic augmentation, model sizes (n/s/m/l/x) vs latency tradeoffs'},
+{label:'Days 5–7',topic:'Deep feature matching',detail:'SuperPoint (homographic adaptation training, interest point + descriptor heads), SuperGlue (attention-based matching graph), LightGlue (faster), comparison with ORB on VO benchmark'},
+],
+exercises:[
+{diff:'easy',name:'YOLOv8 inference in ROS 2',desc:'Run YOLOv8n on a ROS 2 image topic. Publish detections as vision_msgs/Detection2DArray. Visualise as RViz2 overlays. Measure inference latency on CPU vs GPU.'},
+{diff:'medium',name:'Custom YOLOv8 fine-tune',desc:'Collect or download a small robotics dataset (e.g. safety-helmet detection). Fine-tune YOLOv8s for 50 epochs. Plot training curves. Evaluate mAP@50 and mAP@50:95 on held-out set.'},
+{diff:'medium',name:'SuperPoint vs ORB benchmark',desc:'Run both SuperPoint and ORB as feature extractors in your VO pipeline from Week 2. Compare ATE on KITTI seq 00. Measure features/frame, match rate, and total processing time.'},
+{diff:'hard',name:'3D detection fusion',desc:'Project LiDAR points onto the camera image. For each 2D YOLO detection, extract the LiDAR points inside the bounding box. Fit a 3D bounding box using PCA on the extracted points. Publish as 3D markers.'},
+],
+interview:['Explain the anchor-free detection head in YOLOv8 — what does it predict per grid cell?','What is the FPN (Feature Pyramid Network) and why does it help detect small objects?','How does SuperGlue use attention to solve feature matching — what is the graph neural network doing?','How would you design a LiDAR-camera extrinsic calibration and fusion pipeline end to end?'],
+},
+{tab:'Week 4 — Segmentation & Depth',title:'Week 4: Segmentation, monocular depth, and sensor fusion',goal:'Semantic understanding closes the loop between perception and planning. Monocular depth is the frontier of 3D perception — knowing the landscape distinguishes senior candidates.',
+days:[
+{label:'Days 1–2',topic:'Semantic segmentation',detail:'FCN (fully convolutional), DeepLabv3+ (atrous convolution, ASPP), SegFormer (hierarchical transformer encoder), IoU and mIoU metrics, panoptic segmentation overview'},
+{label:'Days 3–4',topic:'Monocular depth',detail:'MiDaS affine-invariant depth (scale+shift ambiguity), Depth Anything v2 (metric depth variant), ZoeDepth for metric depth, DepthPro, evaluation metrics (AbsRel, RMSE, δ₁)'},
+{label:'Days 5–7',topic:'Multi-modal fusion',detail:'LiDAR-camera projection calibration, sparse depth completion (LiDAR + mono depth), fusion architectures (early/mid/late fusion), BEV (Bird\'s Eye View) perception overview'},
+],
+exercises:[
+{diff:'easy',name:'SegFormer on robotics images',desc:'Run SegFormer-b2 on images from your robot simulation. Map class predictions to costmap occupancy values (floor=free, wall=occupied, unknown=unknown). Publish as OccupancyGrid.'},
+{diff:'medium',name:'Depth Anything v2 + LiDAR fusion',desc:'Run Depth Anything v2 (metric) on a camera stream. Project LiDAR sparse depth onto image. Use LiDAR points to correct the metric scale of mono depth. Compare fused vs mono-only depth error.'},
+{diff:'medium',name:'Panoptic segmentation',desc:'Run Mask2Former panoptic on a scene. Separate stuff (floor, walls) from things (persons, objects). Use panoptic labels to build a 3D semantic map by projecting into a pointcloud.'},
+{diff:'hard',name:'BEV perception node',desc:'Implement a simple BEV projection: lift camera features to 3D using depth, splat into a 200×200 BEV grid at 0.1m/cell resolution. Compare occupancy accuracy vs LiDAR ground truth.'},
+],
+interview:['What is the difference between semantic segmentation, instance segmentation, and panoptic segmentation?','How does Depth Anything v2 achieve metric depth from a single image — what supervision does it use?','Explain the scale-shift ambiguity in affine-invariant monocular depth. How do you resolve it?','Design a sensor fusion pipeline for a robot that has one camera and one LiDAR — describe the calibration, synchronisation, and fusion strategy.'],
+},
+],
+7:[
+{tab:'Week 1 — Gazebo & RViz',title:'Week 1: Gazebo simulation and RViz visualisation',goal:'Simulation is where you develop and test before touching real hardware. Knowing how to build a believable simulated environment and debug it in RViz will save you enormous time.',
+days:[
+{label:'Days 1–2',topic:'Gazebo Harmonic',detail:'SDF vs URDF, World and Model SDF structure, physics engine settings (ODE vs Bullet vs DART), sensor plugins (camera, LiDAR, IMU, GPS), ros_gz_bridge for ROS 2 topics'},
+{label:'Days 3–4',topic:'Custom sensors and plugins',detail:'Writing a custom Gazebo sensor plugin in C++, accessing world state from plugin, publishing sensor noise model, attaching to a link, loading via SDF <plugin> tag'},
+{label:'Days 5–7',topic:'RViz 2 custom plugins',detail:'rviz_common::Display subclass, Panel plugin for UI controls, MarkerArray for debug visualisation, custom mesh markers, dynamic reconfigure from RViz panel'},
+],
+exercises:[
+{diff:'easy',name:'Simulated robot world',desc:'Build a Gazebo world with walls, a differential-drive robot (custom SDF), a RGB camera, and a 2D LiDAR. Bridge all sensor topics to ROS 2. Drive the robot with teleop_twist_keyboard.'},
+{diff:'medium',name:'Custom IMU plugin',desc:'Write a Gazebo sensor plugin that reads ground-truth angular velocity + acceleration, adds configurable Gaussian noise and constant bias, and publishes as sensor_msgs/Imu at 200Hz.'},
+{diff:'medium',name:'RViz pose trace display',desc:'Write a custom RViz 2 Display plugin that draws a 3D trail of robot poses as a coloured ribbon. Trail length and colour (by speed) configurable from the Displays panel.'},
+{diff:'hard',name:'Synthetic depth dataset',desc:'Write a Gazebo world with 10 textured objects at random poses. Run a camera sensor, capture 200 images with ground-truth depth and segmentation masks. Save as a COCO-format dataset.'},
+],
+interview:['How does a depth camera plugin in Gazebo work — ray tracing or Z-buffer? What are the implications?','What is the difference between SDF and URDF and when would you use each?','How do you write a Gazebo plugin that applies a force to a robot link in response to a ROS 2 topic?','What is the sim-to-real gap in physics simulation and how does domain randomisation narrow it?'],
+},
+{tab:'Week 2 — PCL & Isaac',title:'Week 2: Pointcloud processing and synthetic data',goal:'PCL is the standard C++ library for 3D data processing. Isaac Sim is the state of the art for photorealistic synthetic data generation — both appear in perception and manipulation roles.',
+days:[
+{label:'Days 1–2',topic:'PCL processing pipeline',detail:'VoxelGrid downsampling, PassThrough filter (z-range), StatisticalOutlierRemoval, RANSAC plane segmentation (pcl::SACSegmentation), EuclideanClusterExtraction, normal estimation'},
+{label:'Days 3–4',topic:'PCL registration',detail:'IterativeClosestPoint (pcl::IterativeClosestPoint), ICP with normals (pcl::PointToPlane), NDT (pcl::NormalDistributionsTransform), FPFH fast feature histograms for initial alignment'},
+{label:'Days 5–7',topic:'NVIDIA Isaac Sim',detail:'USD-based scene composition, Replicator synthetic data API, randomising textures/lighting/poses, domain randomisation for sim-to-real, exporting COCO/KITTI datasets'},
+],
+exercises:[
+{diff:'easy',name:'PCL tabletop segmentation',desc:'Process a pointcloud of objects on a table: PassThrough z-filter → VoxelGrid downsample → RANSAC plane segment → EuclideanCluster to isolate objects. Publish each cluster as a separate PointCloud2.'},
+{diff:'medium',name:'PCL ICP registration',desc:'Register two overlapping pointcloud scans using ICP with point-to-plane metric. Measure final fitness score. Compare convergence rate vs point-to-point ICP across 50 random initial offsets.'},
+{diff:'medium',name:'FPFH + RANSAC alignment',desc:'Use FPFH descriptors to find initial alignment between two pointclouds with large initial offset (>2m). Feed into ICP for refinement. Show pipeline handles cases where direct ICP diverges.'},
+{diff:'hard',name:'Isaac Sim synthetic dataset',desc:'Build an Isaac Sim scene with a robot arm and 5 household objects. Use Replicator to generate 500 images with randomised lighting, object poses, and camera intrinsics. Train a YOLOv8 detector and evaluate on real images.'},
+],
+interview:['Walk through a complete PCL pipeline for detecting and isolating objects on a table.','What is the difference between point-to-point and point-to-plane ICP and why does the latter converge faster?','What is domain randomisation and what specifically do you randomise to bridge the sim-to-real gap?','How does NVIDIA Isaac Sim\'s Replicator API work — how do you automate dataset generation programmatically?'],
+},
+],
+8:[
+{tab:'Week 1 — PyTorch & Detection',title:'Week 1: PyTorch fundamentals and object detection training',goal:'Deep learning for robotics starts with PyTorch. Getting comfortable with the training loop, dataset loading, and evaluation metrics means you can contribute to perception from day one.',
+days:[
+{label:'Days 1–2',topic:'PyTorch training loop',detail:'Tensor operations, autograd and computational graph, DataLoader + custom Dataset, training loop (forward → loss → backward → step), mixed precision (torch.amp), TorchScript for deployment'},
+{label:'Days 3–4',topic:'CNN backbone architectures',detail:'ResNet (skip connections, bottleneck blocks), EfficientNet (compound scaling), FPN feature pyramid, understanding receptive field, transfer learning from ImageNet weights'},
+{label:'Days 5–7',topic:'Detection training pipeline',detail:'Dataset labelling with Roboflow, YOLOv8 training config, augmentation strategy (mosaic, mixup, HSV jitter), mAP@50 and mAP@50:95 metrics, confusion matrix analysis, ONNX export'},
+],
+exercises:[
+{diff:'easy',name:'Custom Dataset class',desc:'Write a PyTorch Dataset for a folder of images + YOLO-format labels. Implement __len__ and __getitem__ with albumentations augmentations (flip, rotate, colour jitter). Verify with a DataLoader in a training loop.'},
+{diff:'medium',name:'Fine-tune YOLOv8 on custom data',desc:'Collect or download 200+ labelled images of a robotics object (e.g. a specific part or person). Fine-tune YOLOv8s for 100 epochs. Plot loss curves, mAP@50 vs epoch. Export to ONNX.'},
+{diff:'medium',name:'TorchScript deployment',desc:'Take your fine-tuned detector, trace it with torch.jit.trace, export to TorchScript. Load and run inference in a C++ application using libtorch. Benchmark latency vs Python.'},
+{diff:'hard',name:'Knowledge distillation',desc:'Distill YOLOv8m into YOLOv8n using soft labels (KL divergence on classification logits + MSE on box regression). Compare student mAP vs same model trained from scratch.'},
+],
+interview:['How does mixed precision training work and why does it reduce memory usage?','Explain the FPN: how does it combine features from different scales and what problem does it solve?','What are mAP@50 and mAP@50:95 — how do you compute them and what do they tell you?','Walk through a training strategy for a custom detector with only 300 labelled images.'],
+},
+{tab:'Week 2 — PointNets & RL',title:'Week 2: Pointcloud deep learning and reinforcement learning',goal:'PointNet and its variants are standard for 3D perception in robotics. A basic grasp of RL is expected for any role involving locomotion, manipulation, or autonomous behaviour.',
+days:[
+{label:'Days 1–2',topic:'PointNet & PointPillars',detail:'PointNet input transform (T-Net), shared MLP per point, global max pooling, PointNet++ hierarchical grouping, PointPillars BEV representation for real-time LiDAR detection'},
+{label:'Days 3–4',topic:'RL fundamentals',detail:'MDP formulation (S,A,R,P,γ), Q-learning (Bellman equation), policy gradient (REINFORCE), actor-critic, PPO (clipped surrogate objective), SAC (entropy regularisation)'},
+{label:'Days 5–7',topic:'RL environments for robotics',detail:'MuJoCo physics (contact simulation, tendons), Isaac Lab on GPU, reward shaping strategy, curriculum learning, PPO hyperparameters (clip ε, entropy bonus, GAE λ)'},
+],
+exercises:[
+{diff:'easy',name:'PointNet classification',desc:'Train PointNet on ModelNet40 for 3D shape classification. Achieve >88% test accuracy. Visualise the critical points (maximum pooling argmax) that the network attends to.'},
+{diff:'medium',name:'PPO CartPole baseline',desc:'Implement PPO from scratch for CartPole-v1. Achieve >490 mean reward in 500k environment steps. Plot reward vs steps. Ablate the importance of the clipping and entropy bonus.'},
+{diff:'medium',name:'PointPillars LiDAR detection',desc:'Run a pretrained PointPillars model on KITTI 3D object detection. Visualise BEV detections and bird-eye view heatmaps. Evaluate AP@0.7 IoU for car class.'},
+{diff:'hard',name:'PPO robot locomotion',desc:'Train a PPO agent for ant locomotion in MuJoCo (Ant-v4). Achieve >4000 mean reward. Implement reward shaping (survival bonus, forward velocity, control cost penalty). Analyse learned gait.'},
+],
+interview:['How does PointNet handle the unordered nature of pointclouds — what is the theoretical justification?','Explain the PPO clipped surrogate objective — what instability does it prevent vs vanilla policy gradient?','What is reward shaping and when can it hurt RL training (reward hacking)?','Compare PPO and SAC — what does maximum-entropy RL give you that PPO does not?'],
+},
+{tab:'Week 3 — IL & Neural SLAM',title:'Week 3: Imitation learning and learning-based perception',goal:'Imitation learning is increasingly used for manipulation and whole-body control. Learning-based SLAM components (SuperPoint, NeRF) are becoming standard — knowing the landscape matters.',
+days:[
+{label:'Days 1–2',topic:'Imitation learning',detail:'Behaviour cloning (supervised learning on demonstrations), DAgger (interactive data collection), covariate shift as the core failure mode, comparison to RL: sample efficiency vs exploration'},
+{label:'Days 3–4',topic:'Learning-based features & matching',detail:'SuperPoint (detector+descriptor in one forward pass, homographic adaptation training), SuperGlue (graph attention matching), LightGlue (faster adaptive matching), benchmark on HPatches'},
+{label:'Days 5–7',topic:'Neural scene representations',detail:'NeRF (volume rendering, positional encoding, implicit function), 3D Gaussian Splatting (3DGS, explicit Gaussians, differentiable rasterisation), applications: novel view synthesis, robot navigation'},
+],
+exercises:[
+{diff:'easy',name:'Behaviour cloning in CartPole',desc:'Collect 100 expert trajectories (from a trained PPO agent) in CartPole. Train a BC policy (MLP). Compare to the PPO agent. Show BC fails on out-of-distribution states by perturbing the initial state.'},
+{diff:'medium',name:'DAgger vs BC',desc:'Implement DAgger for CartPole: interactively query the expert on the learner\'s visited states. Compare learning curves of DAgger vs BC over 10 aggregation rounds. Show DAgger handles distribution shift.'},
+{diff:'medium',name:'SuperPoint vs ORB on HPatches',desc:'Evaluate SuperPoint and ORB on the HPatches homography benchmark. Compare MMA (mean matching accuracy) at 3px threshold. Measure inference time and features per image.'},
+{diff:'hard',name:'NeRF reconstruction',desc:'Train a vanilla NeRF on 50 images of a static scene using nerfstudio. Render novel views. Measure PSNR and SSIM vs held-out test views. Compare reconstruction quality vs COLMAP MVS.'},
+],
+interview:['What is covariate shift in behaviour cloning and why does it cause compounding errors?','How does DAgger fix the distribution shift problem that naive behaviour cloning has?','How does SuperPoint train a detector and descriptor in a self-supervised way without manual labels?','What is the key difference between NeRF and 3D Gaussian Splatting in terms of representation and rendering?'],
+},
+],
+9:[
+{tab:'Week 1 — Coding & Systems',title:'Week 1: Coding patterns and C++ systems design',goal:'Robotics companies test coding rigorously. You need LeetCode fluency in C++ and the ability to design real-time systems under pressure. Start this phase early and run it in parallel with others.',
+days:[
+{label:'Days 1–2',topic:'Core coding patterns in C++',detail:'Graphs (BFS/DFS/Dijkstra), dynamic programming (bottom-up, memoisation), two-pointer/sliding window, union-find, heap/priority_queue — all with C++ STL idioms'},
+{label:'Days 3–4',topic:'C++ systems design',detail:'Memory layout (cache lines, false sharing), lock-free data structures (SPSC/MPSC queues), RAII patterns for robot resources, std::atomic memory model, thread pool design'},
+{label:'Days 5–7',topic:'Robotics-specific coding',detail:'Implementing KD-tree for nearest-neighbour search, occupancy grid as bitset, circular buffer for sensor streams, time-ordered event queue for sensor fusion, quaternion interpolation'},
+],
+exercises:[
+{diff:'easy',name:'LeetCode medium blitz',desc:'Solve 3 medium graph problems and 2 medium DP problems in C++, each in under 25 minutes. Focus on: number of islands, course schedule, longest increasing subsequence, coin change, word break.'},
+{diff:'medium',name:'Lock-free message queue',desc:'Implement a multi-producer single-consumer (MPSC) lock-free queue using compare-and-swap (std::atomic::compare_exchange_weak). Benchmark throughput vs mutex-based queue at varying thread counts.'},
+{diff:'medium',name:'KD-tree from scratch',desc:'Implement a 3D KD-tree supporting k-nearest-neighbour and radius search. Benchmark against linear scan on 1M points. This is the core data structure inside FLANN and PCL.'},
+{diff:'hard',name:'Time-ordered sensor fusion buffer',desc:'Design a buffer that accepts IMU (200Hz), camera (30Hz), LiDAR (10Hz) messages and delivers them in time order with at most 5ms delay. Handle out-of-order arrival and timestamp drift.'},
+],
+interview:['Implement a thread-safe lock-free SPSC queue in C++ using acquire/release semantics — no mutex.','What is false sharing and how do you fix it? Show a concrete example with std::atomic counters.','Design a memory layout for a 2D occupancy grid of 1000×1000 cells that minimises cache misses for ray-casting.','How would you implement a time-ordered priority queue for sensor fusion that handles late-arriving messages?'],
+},
+{tab:'Week 2 — System Design',title:'Week 2: Robot system design and theory Q&A',goal:'System design for robotics is a senior-level skill. You need to reason about latency budgets, failure modes, and hardware-software co-design. Most companies ask at least one system design question.',
+days:[
+{label:'Days 1–2',topic:'AMR system design',detail:'Autonomous mobile robot stack: sensor suite selection, localisation strategy (SLAM vs map-based AMCL), planning architecture (global vs local), safety layer (e-stop, velocity limits), fault tolerance'},
+{label:'Days 3–4',topic:'Perception pipeline design',detail:'Latency budget analysis (sensor→perception→decision→actuation), GPU pipeline with CUDA streams, sensor synchronisation strategies, redundant perception for safety-critical systems'},
+{label:'Days 5–7',topic:'Robotics theory review',detail:'Whiteboard-ready derivations: EKF predict+update, wheel odometry, essential matrix, KF gain, Rodrigues formula, Lie group perturbation. Practise explaining each in under 5 minutes.'},
+],
+exercises:[
+{diff:'easy',name:'1-page AMR design doc',desc:'Write a 1-page system design document for a warehouse AMR: sensors (type, qty, placement), software stack (SLAM system, planner, controller), latency budget per stage, key failure modes and mitigations.'},
+{diff:'medium',name:'Whiteboard EKF',desc:'Set a 10-minute timer. Without notes, derive the EKF predict and update equations on paper. Label every matrix. Explain what P represents physically. Repeat 3 times until fluent.'},
+{diff:'medium',name:'Perception latency audit',desc:'Profile your ROS 2 perception pipeline end-to-end using ros2 trace. Build a timeline showing latency per node. Identify the bottleneck. Propose and implement one optimisation that cuts latency by >20%.'},
+{diff:'hard',name:'Mock system design interview',desc:'Ask a friend (or Claude) to act as interviewer for "Design the software stack for a last-mile delivery robot." Spend 5 min on requirements, 20 min designing, 5 min discussing failure modes. Record and review.'},
+],
+interview:['Design the perception stack for an autonomous forklift — what sensors, what algorithms, what latency budget?','Walk through how you would handle a LiDAR failure mid-operation on a warehouse robot.','How would you architect a ROS 2 system with 15 sensor topics and sub-10ms end-to-end control latency?','Explain your thesis on stochastic hybrid digital twins — how does it relate to probabilistic robotics?'],
+},
+{tab:'Week 3 — Mock Interviews',title:'Week 3: Mock interviews and project storytelling',goal:'The last mile is delivery. Being able to explain your projects clearly, handle unexpected questions, and code under pressure is what converts a strong candidate into a hire.',
+days:[
+{label:'Days 1–2',topic:'Project storytelling',detail:'STAR format for Vulkan engine (Situation, Task, Action, Result + metrics), 3D reconstruction pipeline (problem → approach → technical decisions → outcome), thesis (motivation → method → validation → impact)'},
+{label:'Days 3–4',topic:'Coding under pressure',detail:'Think aloud while coding, start with brute force then optimise, ask clarifying questions before writing, handle edge cases explicitly, verify with examples — all before submitting'},
+{label:'Days 5–7',topic:'Full mock interviews',detail:'45-minute timed sessions: 15 min coding (1 medium problem), 20 min robotics theory (2-3 questions), 10 min project deep dive. Record each session and review immediately.'},
+],
+exercises:[
+{diff:'easy',name:'Project one-pagers',desc:'Write a one-page technical summary for each of your three main projects (Vulkan engine, 3D reconstruction, thesis). Include: the problem, your approach, key technical decisions, metrics, and lessons learned.'},
+{diff:'medium',name:'Timed coding × 3',desc:'Three timed sessions, one per day: pick one medium graph problem, one medium DP, one hard tree problem. Time yourself strictly (35 minutes). Review mistakes. Focus on fluency not just correctness.'},
+{diff:'medium',name:'Verbal EKF derivation',desc:'Record yourself on video explaining the EKF from scratch in exactly 5 minutes — as if answering "explain EKF to me" in an interview. Watch it back and eliminate any "uhh", vague terminology, or skipped steps.'},
+{diff:'hard',name:'Full 45-min mock',desc:'Do a complete mock interview: 15 min LeetCode medium (C++), 20 min robotics theory (SLAM loop closure + EKF + system design), 10 min project Q&A. Use a friend or Claude as interviewer. Score yourself ruthlessly.'},
+],
+interview:['Walk me through your Vulkan rendering pipeline — what were the key architectural decisions?','You mentioned 3D reconstruction — how did you handle the scale ambiguity in monocular reconstruction?','Your thesis uses L*SHA for learning hybrid automata — how would this apply to a real autonomous system?','If you had one week to prepare for a robotics coding interview, what would you focus on and why?'],
+},
+],
+};
+const PHASES=[
+{id:1,level:'core',color:'#888780',title:'C++ & mathematical foundations',duration:'2–3 wks',desc:'Math and C++ patterns underpinning every robotics algorithm',
+topics:[{n:'Modern C++ (17/20)',d:'Concepts, ranges, coroutines, structured bindings, constexpr',f:true},{n:'Linear algebra',d:'Rotation matrices, quaternions, SVD, eigendecomposition, Lie groups SO3/SE3',f:false},{n:'Probability & statistics',d:'Gaussian distributions, Bayes theorem, covariance matrices, entropy',f:false},{n:'Differential equations',d:'ODE fundamentals, Laplace, z-transform, system stability',f:false},{n:'Numerical methods',d:'Newton-Raphson, Gauss-Newton, Cholesky, sparse solvers, Eigen profiling',f:false}],
+interview:['Derive the Kalman gain from Bayesian conditioning on a multivariate Gaussian','Quaternion vs Euler angles — when would you choose each?','What does it mean that SO(3) is a Lie group and why does it matter for EKF?','Implement a 3D rigid body transform class (SE3) from scratch'],
+resources:[{name:'Eigen C++ linear algebra library',url:'https://eigen.tuxfamily.org/dox/',tag:'docs'},{name:'Joan Solà: "A micro Lie theory for robotics"',url:'https://arxiv.org/abs/1812.01537',tag:'paper'},{name:'Probabilistic Robotics — Thrun, Burgard, Fox',url:'http://www.probabilistic-robotics.org/',tag:'book'},{name:'3Blue1Brown: Essence of Linear Algebra',url:'https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab',tag:'video'},{name:'Modern Robotics — Northwestern (free)',url:'https://modernrobotics.northwestern.edu/',tag:'free'}]},
+{id:2,level:'core',color:'#1D9E75',title:'ROS 2 architecture & patterns',duration:'3–4 wks',desc:'Master the middleware you will use daily as a robotics engineer',
+topics:[{n:'Node lifecycle & executors',d:'rclcpp, component nodes, single/multi-threaded executors, callback groups',f:false},{n:'Topics, services, actions',d:'QoS profiles, DDS middleware, latency vs reliability tradeoffs',f:false},{n:'TF2 transforms',d:'Static vs dynamic transforms, tf2_ros, frame graph debugging',f:true},{n:'URDF / XACRO',d:'Links, joints, inertia tensors, Gazebo plugins, collision geometry',f:false},{n:'Parameters & launch system',d:'YAML config, composable nodes, lifecycle launch files',f:false},{n:'Bags & debugging',d:'ros2bag, rqt, PlotJuggler, ros2 trace',f:false}],
+interview:["QoS profiles — when do you pick RELIABLE vs BEST_EFFORT?","Explain the node lifecycle: unconfigured → inactive → active → finalized","When would you choose an action over a service?","How do you avoid TF lookup_transform race conditions?"],
+resources:[{name:'ROS 2 official documentation',url:'https://docs.ros.org/en/rolling/',tag:'docs'},{name:'Nav2 documentation',url:'https://navigation.ros.org/',tag:'docs'},{name:'rclcpp design docs',url:'https://design.ros2.org/',tag:'docs'},{name:'Articulated Robotics: ROS 2 YouTube series',url:'https://www.youtube.com/@ArticulatedRobotics',tag:'video'}]},
+{id:3,level:'core',color:'#BA7517',title:'Kinematics, dynamics & control',duration:'3–4 wks',desc:'Understand how robots move and how to command them precisely',
+topics:[{n:'Forward & inverse kinematics',d:'DH parameters, Jacobian, numerical IK via Newton-Raphson/CCD',f:false},{n:'Rigid body dynamics',d:'Newton-Euler, Lagrangian mechanics, inertia tensors',f:true},{n:'PID control',d:'Discrete-time PID, anti-windup, cascade control, Ziegler-Nichols tuning',f:false},{n:'Model predictive control',d:'State-space form, receding horizon optimisation, OSQP solver',f:false},{n:'Differential drive odometry',d:'Wheel encoder model, ICC, error propagation',f:false},{n:'Motion planning',d:'Configuration space, RRT*, PRM, trajectory optimisation',f:false}],
+interview:['Derive wheel odometry equations for a differential-drive robot from first principles','What is a Jacobian singularity and how do you handle it in real-time IK?','Compare PID and MPC — when is the extra complexity justified?','How does RRT* guarantee asymptotic optimality?'],
+resources:[{name:'Modern Robotics — Lynch & Park (free PDF)',url:'https://modernrobotics.northwestern.edu/',tag:'free'},{name:'Underactuated Robotics — Tedrake (MIT OCW, free)',url:'https://underactuated.mit.edu/',tag:'free'},{name:'MoveIt 2 documentation',url:'https://moveit.picknik.ai/',tag:'docs'},{name:'Steve Brunton: Control Bootcamp',url:'https://www.youtube.com/playlist?list=PLMrJAkhIeNNR20Mz-VpzgfQs5zrYi085m',tag:'video'}]},
+{id:4,level:'core',color:'#185FA5',title:'State estimation & sensor fusion',duration:'4–5 wks',desc:'Fuse noisy sensor streams into a reliable estimate of robot state',
+topics:[{n:'Kalman filter (KF)',d:'Linear system assumptions, predict/update cycle, covariance propagation',f:false},{n:'Extended Kalman Filter (EKF)',d:'Jacobian linearisation, IMU + encoder fusion, covariance tuning',f:false},{n:'Unscented Kalman Filter (UKF)',d:'Sigma points, better nonlinear handling versus EKF',f:false},{n:'Particle filter / MCL',d:'Importance sampling, resampling strategies, particle degeneracy',f:false},{n:'IMU preintegration',d:'Bias modelling, rotation preintegration on manifold',f:false},{n:'robot_localization (ROS 2)',d:'Configuring EKF/UKF nodes, multi-sensor covariance',f:false}],
+interview:['Walk through EKF predict and update equations — what does each matrix represent?','When does EKF fail? When would you prefer UKF or a particle filter?','What is observability and why does it matter?','Difference between process noise Q and measurement noise R'],
+resources:[{name:'Probabilistic Robotics — Thrun et al.',url:'http://www.probabilistic-robotics.org/',tag:'book'},{name:'Joan Solà: "Kalman filtering for robotics"',url:'https://arxiv.org/abs/1802.00681',tag:'paper'},{name:'robot_localization ROS 2 docs',url:'https://docs.ros.org/en/rolling/p/robot_localization/',tag:'docs'},{name:'Michel van Biezen: Kalman filter lectures',url:'https://www.youtube.com/playlist?list=PLX2gX-ftPVXU3oUFVATaN5FX1jjFQXmGH',tag:'video'}]},
+{id:5,level:'core',color:'#0C447C',title:'Localisation & SLAM',duration:'5–6 wks',desc:'Build maps and simultaneously localise within them',
+topics:[{n:'Occupancy grid mapping',d:'Log-odds update rule, ray casting, inverse sensor model',f:false},{n:'Feature-based SLAM (EKF-SLAM)',d:'Landmark extraction, data association (JCBB), loop closure',f:false},{n:'Graph-based SLAM',d:'Factor graphs, pose graph optimisation, g2o / GTSAM',f:false},{n:'Visual odometry (VO)',d:'Essential matrix, 5-point algorithm, bundle adjustment',f:true},{n:'LiDAR odometry',d:'ICP, NDT, LOAM, LeGO-LOAM, point-to-plane',f:false},{n:'Full SLAM systems',d:'ORB-SLAM3, Cartographer, LIO-SAM, RTAB-Map',f:true},{n:'Nav2 navigation stack',d:'AMCL, costmap layers, behaviour tree planner',f:false}],
+interview:['Explain the data association problem — why is it NP-hard?','What is loop closure and why does SLAM drift without it?','Compare ICP and NDT for LiDAR scan registration','Walk through Nav2 costmap layers'],
+resources:[{name:'Cyrill Stachniss: SLAM course (YouTube, free)',url:'https://www.youtube.com/c/CyrillStachniss',tag:'video'},{name:'GTSAM documentation',url:'https://gtsam.org/tutorials/intro.html',tag:'docs'},{name:'Nav2 documentation',url:'https://navigation.ros.org/',tag:'docs'},{name:'ORB-SLAM3 paper & code',url:'https://github.com/UZ-SLAMLab/ORB_SLAM3',tag:'free'}]},
+{id:6,level:'core',color:'#D85A30',title:'Computer vision',duration:'4–5 wks',desc:'Extract geometric and semantic understanding from camera data',
+topics:[{n:'Camera models & calibration',d:'Pinhole, distortion, Zhang method, OpenCV camera_calibration',f:true},{n:'Feature detection & matching',d:'ORB, SIFT, FAST, BRIEF; FLANN/BFMatcher; Lowe ratio test',f:true},{n:'Epipolar geometry',d:'Fundamental/essential matrix, triangulation, RANSAC, DLT',f:true},{n:'Stereo vision & depth',d:'Rectification, block matching, SGM, disparity-to-depth',f:true},{n:'3D reconstruction (SfM/MVS)',d:'COLMAP pipeline, bundle adjustment, dense MVS',f:true},{n:'Optical flow',d:'Lucas-Kanade sparse, Farneback dense, deep flow overview',f:false},{n:'Object detection',d:'YOLOv8/v10, anchor-free heads, NMS, mAP evaluation',f:false},{n:'Semantic segmentation',d:'FCN → DeepLab → SegFormer; IoU and mIoU metrics',f:false},{n:'Monocular depth estimation',d:'MiDaS, Depth Anything v2; metric vs affine-invariant depth',f:false}],
+interview:['Derive the perspective projection equation from 3D world point to 2D pixel','Explain RANSAC — minimum sample set and iteration count','What is the epipolar constraint?','ORB vs SIFT for real-time VO on embedded hardware — tradeoffs?'],
+resources:[{name:'Multiple View Geometry — Hartley & Zisserman',url:'https://www.cambridge.org/core/books/multiple-view-geometry-in-computer-vision/0B6F289C78B2B23F596CAA76D3D43F7A',tag:'book'},{name:'First Principles of CV — Columbia (YouTube, free)',url:'https://fpcv.cs.columbia.edu/',tag:'video'},{name:'OpenCV documentation',url:'https://docs.opencv.org/',tag:'docs'},{name:'Ultralytics YOLOv8 docs',url:'https://docs.ultralytics.com/',tag:'docs'}]},
+{id:7,level:'supporting',color:'#533AB7',title:'Graphics & simulation',duration:'2–3 wks',desc:'Build environments for development, testing, and synthetic data',
+topics:[{n:'Gazebo (Harmonic/Ionic)',d:'SDF models, custom sensor plugins, ROS 2 gz_bridge',f:false},{n:'RViz 2 custom plugins',d:'Display types, rviz_common, marker arrays, custom panels',f:false},{n:'Pointcloud processing (PCL)',d:'Voxel filter, RANSAC plane segmentation, Euclidean clustering',f:false},{n:'Rendering pipelines for robotics',d:'Depth buffer, off-screen rendering, sensor simulation geometry',f:true},{n:'Synthetic data generation',d:'NVIDIA Isaac Sim, domain randomisation, Blensor depth sim',f:false}],
+interview:['How does a depth camera plugin in Gazebo simulate a real sensor?','What is domain randomisation and what specifically do you randomise?','Walk through a complete PCL pipeline for tabletop object detection','Difference between SDF and URDF — when to use each?'],
+resources:[{name:'Gazebo simulation documentation',url:'https://gazebosim.org/docs',tag:'docs'},{name:'PCL documentation & tutorials',url:'https://pointclouds.org/documentation/',tag:'docs'},{name:'NVIDIA Isaac Sim getting started',url:'https://developer.nvidia.com/isaac/sim',tag:'docs'}]},
+{id:8,level:'supporting',color:'#3B6D11',title:'ML for robotics',duration:'4–5 wks',desc:'Apply deep learning to perception, localisation, and control',
+topics:[{n:'PyTorch fundamentals',d:'Tensors, autograd, training loop, DataLoader, torchvision',f:false},{n:'CNN architectures',d:'ResNet, EfficientNet, FPN; backbone + neck + head pattern',f:false},{n:'Object detection',d:'YOLOv8/DETR/RT-DETR; custom dataset training',f:false},{n:'Pointcloud deep learning',d:'PointNet, PointPillars; 3D object detection from LiDAR',f:false},{n:'Reinforcement learning',d:'MDP, Q-learning, PPO, SAC; Isaac Lab / MuJoCo',f:false},{n:'Imitation learning',d:'Behaviour cloning, DAgger; covariate shift failure mode',f:false},{n:'Learning-based VO / SLAM',d:'SuperPoint, SuperGlue, LoFTR; NeRF and 3DGS overview',f:false}],
+interview:['How would you train a detector with 500 labelled images?','Explain the sim-to-real gap for RL policies','What is behaviour cloning and why does covariate shift cause compounding errors?','How does PointNet handle unordered pointclouds?'],
+resources:[{name:'fast.ai Practical Deep Learning (free)',url:'https://course.fast.ai/',tag:'free'},{name:'Spinning Up in RL — OpenAI (free)',url:'https://spinningup.openai.com/',tag:'free'},{name:'PyTorch documentation',url:'https://pytorch.org/docs/stable/',tag:'docs'},{name:'Isaac Lab documentation',url:'https://isaac-sim.github.io/IsaacLab/',tag:'docs'},{name:'Roboflow — dataset management',url:'https://roboflow.com/',tag:'free'}]},
+{id:9,level:'prep',color:'#963D0D',title:'Interview preparation',duration:'Ongoing',desc:'Systems design, coding fluency, and communicating your projects',
+topics:[{n:'Robot system design',d:'Sensor fusion architecture, latency budgets, failure modes',f:false},{n:'C++ systems programming',d:'Lock-free queues, memory layout, cache efficiency, RAII',f:true},{n:'Coding patterns (LeetCode)',d:'Graphs, BFS/DFS, DP, heaps, sliding window — C++ fluency',f:true},{n:'Robotics theory Q&A',d:'Control theory, SLAM derivations, vision geometry whiteboard',f:false},{n:'Project storytelling (STAR)',d:'Vulkan engine, L*SHA/UPPAAL thesis, 3D reconstruction',f:true}],
+interview:['System design: "Design the software stack for a warehouse AMR"','Implement a lock-free SPSC queue in C++ without mutexes','Derive the EKF update step and explain every matrix physically','How does your stochastic hybrid digital twin thesis relate to probabilistic robotics?'],
+resources:[{name:'Elements of Programming Interviews — C++ edition',url:'https://elementsofprogramminginterviews.com/',tag:'book'},{name:'LeetCode (C++, medium/hard)',url:'https://leetcode.com/',tag:'free'},{name:'Robotics Academy — Carnegie Mellon',url:'https://www.roboticsacademy.net/',tag:'free'}]},
+];
+const KEY='rr_v2';
+function getP(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return{}}}
+function saveP(p){localStorage.setItem(KEY,JSON.stringify(p))}
+function isTopicDone(pid,ti){const p=getP();return !!(p.t&&p.t[pid+'_'+ti])}
+function toggleTopic(pid,ti){const p=getP();if(!p.t)p.t={};const k=pid+'_'+ti;p.t[k]=!p.t[k];saveP(p);return p.t[k]}
+function isPhaseDone(pid){const p=getP();return !!(p.ph&&p.ph[pid])}
+function markPhaseDone(pid){const p=getP();if(!p.ph)p.ph={};p.ph[pid]=true;saveP(p)}
+function countTopicsDone(pid,total){const p=getP();if(!p.t)return 0;let c=0;for(let i=0;i<total;i++){if(p.t[pid+'_'+i])c++;}return c}
+function totalTopicsDone(){const p=getP();if(!p.t)return 0;return Object.values(p.t).filter(Boolean).length}
+function totalPhasesDone(){const p=getP();if(!p.ph)return 0;return Object.values(p.ph).filter(Boolean).length}
+function resetProgress(){if(confirm('Reset all progress? This cannot be undone.')){localStorage.removeItem(KEY);location.reload();}}
+function getCurrentPhase(){return PHASES.find(p=>!isPhaseDone(p.id))||null;}
+function buildPrompt(phase){
+const tl=phase.topics.map(t=>'• '+t.n+': '+t.d).join('\n');
+const ql=phase.interview.slice(0,3).map(q=>'• '+q).join('\n');
+return'I\'m studying robotics software engineering for senior SWE interviews.\n\nMy background: Strong C++ (advanced templates, RAII, built a Vulkan 3D renderer), computer vision (OpenCV, 3D reconstruction, projective geometry), some ROS/SLAM experience, Master\'s thesis on stochastic hybrid digital twins (L*SHA learning, UPPAAL SMC validation). Bachelor\'s in Mechanical Engineering.\n\nI want to deeply learn: '+phase.title+'\n\nTopics:\n'+tl+'\n\nTeach me interactively:\n1. Geometric/physical intuition first\n2. Math concisely, then C++ code using Eigen/rclcpp where relevant\n3. Connect each concept to a concrete robotics use case\n4. After each topic ask me one question from this list and WAIT for my response:\n'+ql+'\n\nStart with the most foundational topic. Challenge me — correct me if wrong before moving on.';}
+let AF='all',CW=0;
+const TOTAL=PHASES.reduce((s,p)=>s+p.topics.length,0);
+function init(){renderStrip();renderFilters();renderFeatured();renderPhases();updateStats();selectWeek(0);}
+function updateStats(){
+const td=totalTopicsDone(),pd=totalPhasesDone();
+document.getElementById('stat-done').textContent=pd;
+document.getElementById('stat-topics').textContent=td;
+document.getElementById('stat-topics-denom').textContent='/ '+TOTAL;
+const pct=Math.round((pd/PHASES.length)*100);
+document.getElementById('prog-fill').style.width=pct+'%';
+document.getElementById('prog-label').textContent=pct+'% complete';
+renderStrip();}
+function renderStrip(){
+document.getElementById('pstrip').innerHTML=PHASES.map(p=>{
+const done=isPhaseDone(p.id);
+return'<div class="pip '+(done?'done-pip':'')+'" style="background:'+p.color+';'+(done?'opacity:1':'')+'" title="Phase '+p.id+': '+p.title+'" onclick="scrollToPhase('+p.id+')"></div>';
+}).join('');}
+function renderFilters(){
+const fs=[{k:'all',l:'All phases'},{k:'core',l:'Core'},{k:'supporting',l:'Supporting'},{k:'prep',l:'Interview prep'}];
+document.getElementById('fbar').innerHTML=fs.map(f=>'<button class="filtbtn '+(AF===f.k?'active':'')+'" onclick="setFilter(\''+f.k+'\')">'+f.l+'</button>').join('');}
+function renderFeatured(){
+const cur=getCurrentPhase();
+const lbl=document.getElementById('featured-label');
+const inner=document.getElementById('featured-inner');
+if(!cur){
+lbl.textContent='All phases complete';
+inner.innerHTML='<div class="done-screen"><div class="done-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="done-title">Roadmap complete</div><div class="done-sub">You have finished all 9 phases. Time to apply.</div></div>';
+return;}
+lbl.textContent='Current phase — '+cur.title.toLowerCase();
+const weeks=PHASE_WEEKS[cur.id]||[];
+inner.innerHTML='<div class="fhead"><div class="ftop"><div class="fdot" style="background:'+cur.color+'"></div><div class="ftitle">'+cur.title+'</div><span class="fbadge">Phase '+cur.id+' · current</span></div><div class="fsub">'+cur.desc+'</div></div>'
++'<div class="wtabs" id="wtabs">'+weeks.map((w,i)=>'<button class="wtab '+(i===CW?'active':'')+'" id="wtab-'+i+'" onclick="selectWeek('+i+')">'+w.tab+'</button>').join('')+'</div>'
++'<div id="wcontents">'+weeks.map((w,i)=>'<div class="wcontent '+(i===CW?'active':'')+'" id="wcontent-'+i+'"><div class="wtitle">'+w.title+'</div><div class="wgoal">'+w.goal+'</div>'
++'<div class="blabel" style="margin-top:0">Day-by-day breakdown</div><div class="day-grid">'+w.days.map(d=>'<div class="dcard"><div class="dlabel">'+d.label+'</div><div class="dtopic">'+d.topic+'</div><div class="ddetail">'+d.detail+'</div></div>').join('')+'</div>'
++'<div class="exlabel">Coding exercises</div><div class="ex-grid">'+w.exercises.map(e=>'<div class="excard"><div class="exdiff '+e.diff+'">'+e.diff+'</div><div class="exname">'+e.name+'</div><div class="exdesc">'+e.desc+'</div></div>').join('')+'</div>'
++'<div class="ibox"><div class="ibox-title">Interview questions for this week</div>'+w.interview.map(q=>'<div class="ibox-q">'+q+'</div>').join('')+'</div></div>').join('')+'</div>';}
+function selectWeek(i){CW=i;document.querySelectorAll('.wtab').forEach((t,idx)=>t.classList.toggle('active',idx===i));document.querySelectorAll('.wcontent').forEach((c,idx)=>c.classList.toggle('active',idx===i));}
+const RTAG={book:'tag-book',video:'tag-video',docs:'tag-docs',paper:'tag-paper',free:'tag-free'};
+function renderPhases(){
+const vis=AF==='all'?PHASES:PHASES.filter(p=>p.level===AF);
+const cur=getCurrentPhase();
+document.getElementById('roadmap').innerHTML=vis.map(p=>{
+const done=isPhaseDone(p.id);
+const isCur=cur&&cur.id===p.id;
+const td=countTopicsDone(p.id,p.topics.length);
+const allDone=td===p.topics.length;
+const bc={core:'b-core',supporting:'b-supporting',prep:'b-prep'}[p.level];
+return'<div class="pcard '+(done?'p-done':isCur?'p-current':'')+'" id="phase-'+p.id+'">'
++'<div class="phead" onclick="togglePhase('+p.id+')">'
++'<span class="pdot" style="background:'+p.color+'"></span>'
++'<span class="pnum">'+p.id+'</span>'
++'<div class="pinfo"><div class="ptitle">'+p.title+'</div><div class="pdesc">'+p.desc+'</div></div>'
++'<div class="pmeta">'+(done?'<svg class="done-check" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="var(--green-bg)" stroke="var(--green)" stroke-width="1"/><path d="M5 8l2 2 4-4" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
++'<span class="pbadge '+bc+'">'+p.level+'</span>'
++'<span class="pdur">'+p.duration+'</span>'
++'<span class="pprog '+(allDone?'all-done':'')+'">'+td+'/'+p.topics.length+'</span>'
++'<svg class="pchev" viewBox="0 0 12 12" fill="none"><path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
++'</div></div>'
++'<div class="pbody">'
++'<div class="blabel" style="margin-top:0">Topics — click to mark done</div>'
++p.topics.map((t,i)=>{const td2=isTopicDone(p.id,i);return'<div class="trow '+(td2?'t-done':'')+'" id="trow-'+p.id+'-'+i+'"><div class="t-check" onclick="clickTopic('+p.id+','+i+')" title="'+(td2?'Mark undone':'Mark done')+'">'+(td2?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div><span class="tname">'+t.n+'</span><span class="tsub">'+t.d+'</span>'+(t.f?'<span class="tag-fam">familiar</span>':'')+'</div>';}).join('')
++'<div class="blabel">Interview questions</div>'+p.interview.map(q=>'<div class="litem larr">'+q+'</div>').join('')
++'<div class="blabel">Resources</div>'+p.resources.map(r=>'<div class="res-item"><a class="res-link" href="'+r.url+'" target="_blank" rel="noopener">'+r.name+' ↗</a><span class="res-tag '+(RTAG[r.tag]||'tag-docs')+'">'+r.tag+'</span></div>').join('')
++'<div class="phase-actions">'
++'<button class="act-btn claude-btn" id="cb-'+p.id+'" onclick="copyPrompt('+p.id+')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M4 6.5h5M6.5 4v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Copy Claude learning prompt</button>'
++(done?'<button class="act-btn complete-btn already" disabled>✓ Phase complete</button>':'<button class="act-btn complete-btn '+(allDone?'ready':'')+'" id="cpb-'+p.id+'" onclick="completePhase('+p.id+')">'+(allDone?'✓ Mark phase complete →':'Mark phase complete')+'</button>')
++'</div></div></div>';}).join('');}
+function togglePhase(id){document.getElementById('phase-'+id).classList.toggle('open');}
+function clickTopic(pid,ti){
+const done=toggleTopic(pid,ti);
+const row=document.getElementById('trow-'+pid+'-'+ti);
+row.classList.toggle('t-done',done);
+row.querySelector('.t-check').innerHTML=done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'';
+const phase=PHASES.find(p=>p.id===pid);
+const td=countTopicsDone(pid,phase.topics.length);
+const allDone=td===phase.topics.length;
+const pg=document.querySelector('#phase-'+pid+' .pprog');
+if(pg){pg.textContent=td+'/'+phase.topics.length;pg.classList.toggle('all-done',allDone);}
+const cpb=document.getElementById('cpb-'+pid);
+if(cpb){cpb.classList.toggle('ready',allDone);cpb.textContent=allDone?'✓ Mark phase complete →':'Mark phase complete';}
+updateStats();}
+function completePhase(pid){
+const phase=PHASES.find(p=>p.id===pid);
+const td=countTopicsDone(pid,phase.topics.length);
+if(td<phase.topics.length&&!confirm((phase.topics.length-td)+' topic(s) not yet checked. Mark complete anyway?'))return;
+markPhaseDone(pid);
+const card=document.getElementById('phase-'+pid);
+card.classList.add('p-done');card.classList.remove('open','p-current');
+showToast('Phase '+pid+' complete!');
+CW=0;
+renderFeatured();
+updateStats();
+renderPhases();
+const cur=getCurrentPhase();
+if(cur){
+setTimeout(()=>{
+const next=document.getElementById('phase-'+cur.id);
+if(next){next.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>next.classList.add('open'),400);}
+},600);}
+}
+function copyPrompt(pid){
+const phase=PHASES.find(p=>p.id===pid);
+const prompt=buildPrompt(phase);
+navigator.clipboard.writeText(prompt).then(()=>{
+const btn=document.getElementById('cb-'+pid);
+if(btn){btn.classList.add('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 6.5l2.5 2.5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied!';}
+showToast('Claude prompt copied — paste in a new chat');
+setTimeout(()=>{if(btn){btn.classList.remove('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M4 6.5h5M6.5 4v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Copy Claude learning prompt';}},3000);
+}).catch(()=>{const ta=document.createElement('textarea');ta.value=prompt;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Prompt copied');});}
+function setFilter(k){AF=k;renderFilters();renderPhases();}
+function scrollToPhase(id){const el=document.getElementById('phase-'+id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});if(!el.classList.contains('open'))el.classList.add('open');}}
+let tt=null;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2800);}
+function toggleTheme(){const h=document.documentElement;const d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').textContent=d?'☾ Dark':'☀ Light';}
+init();
+</script></body></html>
