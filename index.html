@@ -379,6 +379,12 @@ function buildPrompt(phase){
 const tl=phase.topics.map(t=>'• '+t.n+': '+t.d).join('\n');
 const ql=phase.interview.slice(0,3).map(q=>'• '+q).join('\n');
 return'I\'m studying robotics software engineering for senior SWE interviews at robotics companies.\n\nMy background: Strong C++ (advanced templates, RAII, built a Vulkan 3D renderer from scratch), computer vision (OpenCV, 3D reconstruction pipelines, projective geometry — took Polimi IACV course), ROS/SLAM (Polimi Robotics + Control of Mobile Robots courses), Master\'s thesis on stochastic hybrid digital twins (L*SHA learning framework, UPPAAL SMC formal verification). Bachelor\'s in Mechanical Engineering + CS from Polimi.\n\nI want to deeply learn: '+phase.title+'\n\nTopics to cover:\n'+tl+'\n\nPlease teach me interactively:\n1. Start with geometric or physical intuition — I think visually\n2. Show the math concisely, then give a C++ or Python code example using Eigen/rclcpp/OpenCV where relevant\n3. Connect each concept to a concrete robotics use case (SLAM, perception, control, navigation)\n4. After each topic, ask me one question from this list and WAIT for my response before continuing:\n'+ql+'\n\nStart with the most foundational topic and build up. Challenge me — correct me if my answer is incomplete before moving on.';}
+function buildWeekPrompt(phase,week){
+const bg='My background: Strong C++ (advanced templates, RAII, built a Vulkan 3D renderer from scratch), computer vision (OpenCV, 3D reconstruction pipelines, projective geometry — took Polimi IACV course), ROS/SLAM (Polimi Robotics + Control of Mobile Robots courses), Master\'s thesis on stochastic hybrid digital twins (L*SHA learning framework, UPPAAL SMC formal verification). Bachelor\'s in Mechanical Engineering + CS from Polimi.';
+const dayList=week.days.map(d=>'• '+d.label+' — '+d.topic+': '+d.detail).join('\n');
+const exList=week.exercises.map(e=>'['+e.diff.toUpperCase()+'] '+e.name+': '+e.desc).join('\n');
+const qList=week.interview.map(q=>'• '+q).join('\n');
+return'I\'m studying robotics software engineering for senior SWE interviews.\n\n'+bg+'\n\nI am currently on:\nPhase '+phase.id+': '+phase.title+'\n'+week.title+'\n\n─── WEEK PLAN ───\n'+dayList+'\n\n─── CODING EXERCISES FOR THIS WEEK ───\n'+exList+'\n\n─── INTERVIEW QUESTIONS FOR THIS WEEK ───\n'+qList+'\n\nPlease do the following:\n1. Work through each day\'s topics in order. For each topic, start with geometric/physical intuition (I think visually), then the math, then a C++ or Python code example using Eigen/rclcpp/OpenCV where relevant.\n2. After covering each day\'s topics, pick one of the interview questions above and ask it to me. WAIT for my response and correct me before moving on.\n3. Once we finish the topics, walk me through each coding exercise: explain the goal, give me a hint on the key insight, then ask me to attempt it before you show the solution.\n4. Connect everything to a concrete robotics use case.\n\nStart with Day 1. Go.';}
 let AF='all',CW=0;
 function init(){renderStrip();renderFilters();renderFeatured();renderPhases();updateStats();selectWeek(0);}
 function updateStats(){
@@ -413,7 +419,11 @@ inner.innerHTML='<div class="fhead"><div class="ftop"><div class="fdot" style="b
 +'<div id="wcontents">'+weeks.map((w,i)=>'<div class="wcontent '+(i===CW?'active':'')+'" id="wcontent-'+i+'"><div class="wtitle">'+w.title+'</div><div class="wgoal">'+w.goal+'</div>'
 +'<div class="blabel" style="margin-top:0">Day-by-day breakdown</div><div class="day-grid">'+w.days.map(d=>'<div class="dcard"><div class="dlabel">'+d.label+'</div><div class="dtopic">'+d.topic+'</div><div class="ddetail">'+d.detail+'</div></div>').join('')+'</div>'
 +'<div class="exlabel">Coding exercises</div><div class="ex-grid">'+w.exercises.map(e=>'<div class="excard"><div class="exdiff '+e.diff+'">'+e.diff+'</div><div class="exname">'+e.name+'</div><div class="exdesc">'+e.desc+'</div></div>').join('')+'</div>'
-+'<div class="ibox"><div class="ibox-title">Interview questions for this week</div>'+w.interview.map(q=>'<div class="ibox-q">'+q+'</div>').join('')+'</div></div>').join('')+'</div>';}
++'<div class="ibox"><div class="ibox-title">Interview questions for this week</div>'+w.interview.map(q=>'<div class="ibox-q">'+q+'</div>').join('')+'</div>'
++'<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">'
++'<button class="act-btn claude-btn" id="wcb-'+cur.id+'-'+i+'" onclick="copyWeekPrompt('+cur.id+','+i+')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M4 6.5h5M6.5 4v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Copy week '+(i+1)+' Claude prompt</button>'
++'</div>'
++'</div>').join('')+'</div>';}
 function selectWeek(i){CW=i;document.querySelectorAll('.wtab').forEach((t,idx)=>t.classList.toggle('active',idx===i));document.querySelectorAll('.wcontent').forEach((c,idx)=>c.classList.toggle('active',idx===i));}
 const RTAG={book:'tag-book',video:'tag-video',docs:'tag-docs',paper:'tag-paper',free:'tag-free'};
 function renderPhases(){
@@ -480,6 +490,19 @@ if(btn){btn.classList.add('copied');btn.innerHTML='<svg width="13" height="13" v
 showToast('Claude prompt copied — paste in a new chat');
 setTimeout(()=>{if(btn){btn.classList.remove('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M4 6.5h5M6.5 4v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Copy Claude learning prompt';}},3000);
 }).catch(()=>{const ta=document.createElement('textarea');ta.value=prompt;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Prompt copied');});}
+function copyWeekPrompt(pid,wi){
+const phase=PHASES.find(p=>p.id===pid);
+const weeks=PHASE_WEEKS[pid]||[];
+const week=weeks[wi];
+if(!week)return;
+const prompt=buildWeekPrompt(phase,week);
+const btnId='wcb-'+pid+'-'+wi;
+navigator.clipboard.writeText(prompt).then(()=>{
+const btn=document.getElementById(btnId);
+if(btn){btn.classList.add('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 6.5l2.5 2.5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied!';}
+showToast('Week '+(wi+1)+' prompt copied — paste in a new chat');
+setTimeout(()=>{if(btn){btn.classList.remove('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M4 6.5h5M6.5 4v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Copy week '+(wi+1)+' Claude prompt';}},3000);
+}).catch(()=>{const ta=document.createElement('textarea');ta.value=prompt;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Week '+(wi+1)+' prompt copied');});}
 function setFilter(k){AF=k;renderFilters();renderPhases();}
 function scrollToPhase(id){const el=document.getElementById('phase-'+id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});if(!el.classList.contains('open'))el.classList.add('open');}}
 let tt=null;
